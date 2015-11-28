@@ -103,16 +103,16 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     func session(session: MCSession, peer peerID: MCPeerID, didChangeState state: MCSessionState) {
         print("changed State \(peerID)")
         
-        let msgDict : [String: AnyObject] = ["message": 0.5]
-        let data : NSData = NSKeyedArchiver.archivedDataWithRootObject(msgDict)
-        //if session.connectedPeers.count > 0 {
-            do {
-                try session.sendData(data, toPeers: [peerID], withMode: MCSessionSendDataMode.Reliable)
-                print("sent data")
-            } catch {
-                print("failed to send data \(session.connectedPeers.count)")
-            }
-        //}
+//        let msgDict : [String: AnyObject] = ["message": 0.5]
+//        let data : NSData = NSKeyedArchiver.archivedDataWithRootObject(msgDict)
+//        //if session.connectedPeers.count > 0 {
+//            do {
+//                try session.sendData(data, toPeers: [peerID], withMode: MCSessionSendDataMode.Reliable)
+//                print("sent data")
+//            } catch {
+//                print("failed to send data \(session.connectedPeers.count)")
+//            }
+//        //}
     }
 
 }
