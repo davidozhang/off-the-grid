@@ -32,6 +32,9 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
     var strokes = [Stroke]()
     var otherStrokes = [Stroke]()
     
+    var allStrokes = [Stroke]()
+    var allOtherStrokes = [Stroke]()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -69,27 +72,18 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
         swipe = false
         let touch = touches.first! as UITouch
         lastPoint = touch.locationInView(self.view)
-
+        if (self.strokes.count > 0) {
+            for i in 0...(self.strokes.count - 1) {
+                self.allStrokes.append(self.strokes[i])
+            }
+        }
+        self.strokes = []
         
     }
     
-    func draw() {
+    func draw(stroke: Stroke) {
         UIGraphicsBeginImageContextWithOptions(view.frame.size, false, 1)
         let context = UIGraphicsGetCurrentContext()
-        let rect = CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height)
-        CGContextSetRGBFillColor(context, 1.0, 1.0, 1.0, 1.0)
-        CGContextFillRect(context, rect)
-        CGContextAddRect(context, rect)
-        
-        
-        for stroke in self.strokes {
-            drawStroke(context, stroke: stroke)
-        }
-        
-        UIGraphicsEndImageContext()
-    }
-    
-    func drawStroke(context: CGContextRef?, stroke: Stroke) {
         tempImageView.image?.drawInRect(CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height))
         CGContextMoveToPoint(context, stroke.fromPoint.x, stroke.fromPoint.y)
         CGContextAddLineToPoint(context, stroke.toPoint.x, stroke.toPoint.y)
@@ -98,32 +92,31 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
         let d = sqrt(dx * dx + dy * dy)
         
         CGContextSetLineCap(context, CGLineCap.Round)
-        CGContextSetLineWidth(context, brushWidth * d / 10)
-        CGContextSetRGBStrokeColor(context, stroke.r, stroke.g, stroke.b, stroke.a)
+        CGContextSetLineWidth(context, brushWidth * d / 20)
+        CGContextSetRGBStrokeColor(context, red, green, blue, 1.0)
+        CGContextSetBlendMode(context, CGBlendMode.Normal)
         CGContextStrokePath(context)
         tempImageView.image = UIGraphicsGetImageFromCurrentImageContext()
-//        tempImageView.alpha = opacity
-        
+        tempImageView.alpha = opacity
+        UIGraphicsEndImageContext()
     }
     
     override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
         swipe = true
         let touch = touches.first! as UITouch
         let currentPoint = touch.locationInView(view)
-        strokes.append(Stroke(fromPoint: lastPoint, toPoint: currentPoint, r: self.red, g: self.green, b: self.blue, a: self.opacity, timeStamp: CGFloat(CFAbsoluteTimeGetCurrent())))
-        draw()
-        if delegate != nil {
-            delegate!.newStrokes(self.strokes)
-        }
-        
+        let latestStroke = Stroke(fromPoint: lastPoint, toPoint: currentPoint, r: self.red, g: self.green, b: self.blue, a: self.opacity, timeStamp: CGFloat(CFAbsoluteTimeGetCurrent()))
+        self.strokes.append(latestStroke)
+        draw(latestStroke)
         lastPoint = currentPoint
-
     }
     
     
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
         if !swipe {
-            draw()
+            let latestStroke = Stroke(fromPoint: lastPoint, toPoint: lastPoint, r: self.red, g: self.green, b: self.blue, a: self.opacity, timeStamp: CGFloat(CFAbsoluteTimeGetCurrent()))
+            self.strokes.append(latestStroke)
+            draw(latestStroke)
         }
         
         UIGraphicsBeginImageContext(mainImageView.frame.size)
@@ -133,20 +126,43 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
         UIGraphicsEndImageContext()
         
         tempImageView.image = nil
+        
+        if delegate != nil {
+            delegate!.newStrokes(self.strokes)
+        }
+        
+        sleep(5)
+        
+        
     }
     
     func newStrokesReceived(strokes: [Stroke]) {
+        if (self.otherStrokes.count > 0) {
+            for i in 0...(self.otherStrokes.count-1) {
+                self.otherStrokes.append(self.otherStrokes[i])
+            }
+        }
+        self.otherStrokes = strokes
         if (!NSThread.isMainThread()) {
             dispatch_async(dispatch_get_main_queue(), {
-                self.otherStrokes = strokes
+                
                 // DO SOMETHING ON THE MAINTHREAD
-                self.draw()
+                for i in 0...(self.otherStrokes.count-1) {
+                    self.draw(self.otherStrokes[i])
+                }
             })
         } else {
-            draw()
+            // DO SOMETHING ON THE MAINTHREAD
+            for i in 0...(self.otherStrokes.count-1) {
+                self.draw(self.otherStrokes[i])
+            }
         }
     }
 
+    func undo() {
+        
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
