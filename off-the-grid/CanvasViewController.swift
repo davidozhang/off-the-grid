@@ -46,14 +46,18 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "ColourSegue" {
             if let colorViewController = segue.destinationViewController as? ColorViewController {
+                colorViewController.delegate = self
                 if let popvc = colorViewController.popoverPresentationController {
                     popvc.delegate = self
+                    popvc.sourceView = self.view
+                    popvc.sourceRect = CGRectMake(lastPoint.x, lastPoint.y, 0, 0)
                 }
             }
         }
     }
     
     func longPressed(sender: UILongPressGestureRecognizer) {
+        
         performSegueWithIdentifier("ColourSegue", sender: nil)
     }
     

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8191" systemVersion="15A284" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="JXE-gh-DAO">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9059" systemVersion="15B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="JXE-gh-DAO">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9049"/>
     </dependencies>
     <scenes>
         <!--Connect-->
@@ -82,7 +82,7 @@
                         <outlet property="mainImageView" destination="l62-iz-DCQ" id="4dU-Mf-PrU"/>
                         <outlet property="tempImageView" destination="7bZ-CW-lPt" id="JCc-ZC-YMP"/>
                         <segue destination="kCz-x1-IDE" kind="popoverPresentation" identifier="ColourSegue" popoverAnchorView="7bZ-CW-lPt" id="Wgk-ze-k1B">
-                            <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
+                            <popoverArrowDirection key="popoverArrowDirection"/>
                         </segue>
                     </connections>
                 </viewController>
@@ -93,19 +93,19 @@
         <!--Color View Controller-->
         <scene sceneID="dR5-PX-c5c">
             <objects>
-                <viewController id="kCz-x1-IDE" customClass="ColorViewController" customModule="Off_The_Grid" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController autoresizesArchivedViewToFullSize="NO" id="kCz-x1-IDE" customClass="ColorViewController" customModule="Off_The_Grid" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="eEH-dy-bkh"/>
                         <viewControllerLayoutGuide type="bottom" id="g4L-Ef-Ehm"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="xtP-Oq-bei">
+                    <view key="view" contentMode="scaleAspectFit" id="xtP-Oq-bei">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="MKH-g2-rep">
-                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                <rect key="frame" x="0.0" y="0.0" width="200" height="200"/>
                                 <animations/>
-                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="UBq-Ch-x83">
+                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="0.0" minimumInteritemSpacing="0.0" id="UBq-Ch-x83">
                                     <size key="itemSize" width="100" height="100"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
@@ -122,24 +122,22 @@
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
                                         <animations/>
+                                        <size key="customSize" width="100" height="100"/>
                                     </collectionViewCell>
                                 </cells>
                             </collectionView>
-                            <slider opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="KEF-YB-Czm">
-                                <rect key="frame" x="3" y="103" width="118" height="31"/>
-                                <animations/>
-                            </slider>
                         </subviews>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
+                    <value key="contentSizeForViewInPopover" type="size" width="200" height="200"/>
                     <connections>
                         <outlet property="collectionView" destination="MKH-g2-rep" id="9ha-dx-LRf"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="YWe-ni-hpA" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="993" y="996"/>
+            <point key="canvasLocation" x="1121" y="976"/>
         </scene>
     </scenes>
     <resources>

@@ -25,16 +25,18 @@ class ColorViewController: UIViewController, UICollectionViewDataSource, UIColle
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let cell: ColorCell = collectionView.dequeueReusableCellWithReuseIdentifier("ColorCell", forIndexPath: indexPath) as! ColorCell
         let colour = colours[indexPath.row]
-        cell.backgroundColor = UIColor.init(red: colour.0, green: colour.1, blue: colour.2, alpha: 1.0)
+        cell.backgroundColor = UIColor.init(red: (colour.0)/255, green: (colour.1)/255, blue: (colour.2)/255, alpha: 1.0)
         print(cell.backgroundColor)
         return cell
     }
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        print("Selected")
         if (delegate != nil) {
             let colour = colours[indexPath.row]
-            delegate?.changeColor(colour.0, blue: colour.1, green: colour.2, alpha: 0.5)
+            delegate?.changeColor((colour.0)/255, blue: (colour.1)/255, green: (colour.2)/255, alpha: 0.5)
+        }
+        self.dismissViewControllerAnimated(true) { () -> Void in
+            
         }
     }
     
@@ -45,6 +47,9 @@ class ColorViewController: UIViewController, UICollectionViewDataSource, UIColle
         self.collectionView?.dataSource = self
         self.collectionView?.delegate = self
         colours.append((98, 65, 247))
+        colours.append((61, 96, 241))
+        colours.append((44, 175, 233))
+        colours.append((39, 211, 154))
     }
 
     override func didReceiveMemoryWarning() {
