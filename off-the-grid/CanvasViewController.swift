@@ -45,8 +45,12 @@ class CanvasViewController: UIViewController {
         CGContextMoveToPoint(context, fromPoint.x, fromPoint.y)
         CGContextAddLineToPoint(context, toPoint.x, toPoint.y)
         
+        let dx = toPoint.x - fromPoint.x
+        let dy = toPoint.y - fromPoint.y
+        let d = sqrt(dx * dx + dy * dy)
+        
         CGContextSetLineCap(context, CGLineCap.Round)
-        CGContextSetLineWidth(context, brushWidth)
+        CGContextSetLineWidth(context, brushWidth * d / 10)
         CGContextSetRGBStrokeColor(context, red, green, blue, 1.0)
         CGContextSetBlendMode(context, CGBlendMode.Normal)
         CGContextStrokePath(context)
