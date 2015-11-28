@@ -9,12 +9,16 @@
 import UIKit
 import MultipeerConnectivity
 
+protocol viewControllerDelegate {
+    func newStrokeReceived(fromPoint: CGPoint, toPoint: CGPoint)
+}
+
 class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessionDelegate, CanvasViewControllerDelegate {
     private let serviceType = "Off-The-Grid"
     private let myPeerId = MCPeerID.init(displayName: UIDevice.currentDevice().name)
     private var session : MCSession?
     private var advertiser : MCAdvertiserAssistant?
-    @IBOutlet var canvasViewController: CanvasViewController!
+    var vcDelegate : viewControllerDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -78,9 +82,14 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     
     func session(session: MCSession, didReceiveData data: NSData, fromPeer peerID: MCPeerID) {
         print("didRecieve")
-        let dict = NSKeyedUnarchiver.unarchiveObjectWithData(data) as! [String: String]
-        print(dict["message"])
+        let dict = NSKeyedUnarchiver.unarchiveObjectWithData(data) as! [String: CGFloat]
+        let fromPoint : CGPoint = CGPointMake(dict["fromPointX"]!, dict["fromPointY"]!)
+        let toPoint : CGPoint = CGPointMake(dict["toPointX"]!, dict["toPointY"]!)
+        if vcDelegate != nil {
+            vcDelegate!.newStrokeReceived(fromPoint, toPoint: toPoint)
+        }
     }
+    
     func session(session: MCSession, didStartReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, withProgress progress: NSProgress) {
         print("didStartReceivingResourceWithName \(resourceName)")
     }
@@ -94,7 +103,7 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     func session(session: MCSession, peer peerID: MCPeerID, didChangeState state: MCSessionState) {
         print("changed State \(peerID)")
         
-        let msgDict : [String: AnyObject] = ["message": "hey"]
+        let msgDict : [String: AnyObject] = ["message": 0.5]
         let data : NSData = NSKeyedArchiver.archivedDataWithRootObject(msgDict)
         //if session.connectedPeers.count > 0 {
             do {

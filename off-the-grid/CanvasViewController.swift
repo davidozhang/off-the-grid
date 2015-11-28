@@ -12,7 +12,7 @@ protocol CanvasViewControllerDelegate {
     func newStroke(fromPoint: CGPoint, toPoint: CGPoint)
 }
 
-class CanvasViewController: UIViewController, UIPopoverPresentationControllerDelegate, UICollectionViewDelegate, ColorViewControllerDelegate {
+class CanvasViewController: UIViewController, UIPopoverPresentationControllerDelegate, UICollectionViewDelegate, ColorViewControllerDelegate , viewControllerDelegate{
 
     @IBOutlet weak var mainImageView: UIImageView!
     @IBOutlet weak var tempImageView: UIImageView!
@@ -122,6 +122,9 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
         
     }
     
+    func newStrokeReceived(fromPoint: CGPoint, toPoint: CGPoint) {
+        drawLineFrom(fromPoint, toPoint: toPoint)
+    }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()

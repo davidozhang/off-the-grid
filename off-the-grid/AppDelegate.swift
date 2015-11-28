@@ -21,6 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let canvasController = viewControllers[1] as! CanvasViewController
         canvasController.delegate = viewController
         
+        
         // Override point for customization after application launch.
         return true
     }
