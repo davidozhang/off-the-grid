@@ -17,7 +17,7 @@
 
 /* Begin PBXFileReference section */
 		061B3D02721EEF3B5FCED551 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
-		0EBB47291C09796600382DA5 /* off-the-grid.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "off-the-grid.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0EBB47291C09796600382DA5 /* Off The Grid.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Off The Grid.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0EBB472C1C09796600382DA5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0EBB472E1C09796600382DA5 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		0EBB47311C09796600382DA5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -61,7 +61,7 @@
 		0EBB472A1C09796600382DA5 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				0EBB47291C09796600382DA5 /* off-the-grid.app */,
+				0EBB47291C09796600382DA5 /* Off The Grid.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -91,9 +91,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		0EBB47281C09796600382DA5 /* off-the-grid */ = {
+		0EBB47281C09796600382DA5 /* Off The Grid */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0EBB473B1C09796600382DA5 /* Build configuration list for PBXNativeTarget "off-the-grid" */;
+			buildConfigurationList = 0EBB473B1C09796600382DA5 /* Build configuration list for PBXNativeTarget "Off The Grid" */;
 			buildPhases = (
 				6F4CD045E96B3974FBEB3D31 /* Check Pods Manifest.lock */,
 				0EBB47251C09796600382DA5 /* Sources */,
@@ -106,9 +106,9 @@
 			);
 			dependencies = (
 			);
-			name = "off-the-grid";
+			name = "Off The Grid";
 			productName = "off-the-grid";
-			productReference = 0EBB47291C09796600382DA5 /* off-the-grid.app */;
+			productReference = 0EBB47291C09796600382DA5 /* Off The Grid.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -123,10 +123,11 @@
 				TargetAttributes = {
 					0EBB47281C09796600382DA5 = {
 						CreatedOnToolsVersion = 7.1.1;
+						DevelopmentTeam = R6552SUGAZ;
 					};
 				};
 			};
-			buildConfigurationList = 0EBB47241C09796600382DA5 /* Build configuration list for PBXProject "off-the-grid" */;
+			buildConfigurationList = 0EBB47241C09796600382DA5 /* Build configuration list for PBXProject "Off The Grid" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -139,7 +140,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				0EBB47281C09796600382DA5 /* off-the-grid */,
+				0EBB47281C09796600382DA5 /* Off The Grid */,
 			);
 		};
 /* End PBXProject section */
@@ -325,10 +326,14 @@
 			baseConfigurationReference = A7E537201401246CB6B65BB1 /* Pods.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = "off-the-grid/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "Team-Off-The-Grid.off-the-grid";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Off The Grid";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -337,17 +342,21 @@
 			baseConfigurationReference = 061B3D02721EEF3B5FCED551 /* Pods.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = "off-the-grid/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "Team-Off-The-Grid.off-the-grid";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Off The Grid";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		0EBB47241C09796600382DA5 /* Build configuration list for PBXProject "off-the-grid" */ = {
+		0EBB47241C09796600382DA5 /* Build configuration list for PBXProject "Off The Grid" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0EBB47391C09796600382DA5 /* Debug */,
@@ -356,7 +365,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		0EBB473B1C09796600382DA5 /* Build configuration list for PBXNativeTarget "off-the-grid" */ = {
+		0EBB473B1C09796600382DA5 /* Build configuration list for PBXNativeTarget "Off The Grid" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0EBB473C1C09796600382DA5 /* Debug */,

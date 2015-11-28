@@ -2,7 +2,7 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:off-the-grid.xcodeproj">
+      location = "group:/Users/david/github/off-the-grid/Off The Grid.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Pods/Pods.xcodeproj">
