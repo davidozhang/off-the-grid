@@ -7,13 +7,40 @@
 //
 
 import UIKit
+import MultipeerConnectivity
 
-class ViewController: UIViewController {
-
+class ViewController: UIViewController, UIPopoverPresentationControllerDelegate {
+    private let serviceType = "Off-The-Grid"
+    private let myPeerId = MCPeerID.init(displayName: UIDevice.currentDevice().name)
+    private var session : MCSession?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.session = MCSession(peer: self.myPeerId)
+
         // Do any additional setup after loading the view, typically from a nib.
     }
+    
+    override func viewDidAppear(animated: Bool) {
+        let browser = MCBrowserViewController(serviceType: serviceType, session: self.session!)
+        
+        self.addChildViewController(browser)
+        let tempFrame = CGRectMake(0, 0, self.view.frame.width, self.view.frame.height - (self.tabBarController?.tabBar.frame.height)!)
+        browser.view.frame = tempFrame
+        self.view.addSubview(browser.view)
+//        browser.modalPresentationStyle = .Popover
+//        let popoverBrowserController = browser.popoverPresentationController
+//        popoverBrowserController?.permittedArrowDirections = UIPopoverArrowDirection(rawValue: 0)
+//        popoverBrowserController?.delegate = self
+//        popoverBrowserController?.sourceView = self.view
+//        popoverBrowserController?.sourceRect = CGRectMake(self.view.frame.width/2 - 10, self.view.frame.height/2 - 10, 0, 0)
+   //     presentViewController(browser, animated: true, completion: {})
+    }
+    
+    func adaptivePresentationStyleForPresentationController(controller: UIPresentationController) -> UIModalPresentationStyle {
+        return UIModalPresentationStyle.None
+    }
+    
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
