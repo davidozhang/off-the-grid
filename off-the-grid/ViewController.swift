@@ -9,7 +9,7 @@
 import UIKit
 import MultipeerConnectivity
 
-class ViewController: UIViewController, UIPopoverPresentationControllerDelegate, MCBrowserViewControllerDelegate {
+class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessionDelegate {
     private let serviceType = "Off-The-Grid"
     private let myPeerId = MCPeerID.init(displayName: UIDevice.currentDevice().name)
     private var session : MCSession?
@@ -18,6 +18,7 @@ class ViewController: UIViewController, UIPopoverPresentationControllerDelegate,
     override func viewDidLoad() {
         super.viewDidLoad()
         self.session = MCSession(peer: self.myPeerId)
+        self.session!.delegate = self
         self.advertiser = MCAdvertiserAssistant(serviceType: serviceType, discoveryInfo: nil, session: self.session!)
         self.advertiser?.start()
         
@@ -42,9 +43,7 @@ class ViewController: UIViewController, UIPopoverPresentationControllerDelegate,
    //     presentViewController(browser, animated: true, completion: {})
     }
     
-    func adaptivePresentationStyleForPresentationController(controller: UIPresentationController) -> UIModalPresentationStyle {
-        return UIModalPresentationStyle.None
-    }
+  
     
 
     override func didReceiveMemoryWarning() {
@@ -53,11 +52,33 @@ class ViewController: UIViewController, UIPopoverPresentationControllerDelegate,
     }
 
     func browserViewControllerDidFinish(browserViewController: MCBrowserViewController) {
-        NSLog("%@", "finished")
+        print("finished")
     }
     
     func browserViewControllerWasCancelled(browserViewController: MCBrowserViewController) {
         print("user denied")
+    }
+    
+    
+    
+  
+    
+    
+    func session(session: MCSession, didReceiveData data: NSData, fromPeer peerID: MCPeerID) {
+        
+    }
+    func session(session: MCSession, didStartReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, withProgress progress: NSProgress) {
+        
+    }
+    
+    func session(session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, atURL localURL: NSURL, withError error: NSError?) {
+        
+    }
+    func session(session: MCSession, didReceiveStream stream: NSInputStream, withName streamName: String, fromPeer peerID: MCPeerID) {
+        
+    }
+    func session(session: MCSession, peer peerID: MCPeerID, didChangeState state: MCSessionState) {
+        
     }
 
 }
