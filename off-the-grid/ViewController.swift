@@ -13,10 +13,13 @@ class ViewController: UIViewController, UIPopoverPresentationControllerDelegate 
     private let serviceType = "Off-The-Grid"
     private let myPeerId = MCPeerID.init(displayName: UIDevice.currentDevice().name)
     private var session : MCSession?
+    private var advertiser : MCAdvertiserAssistant?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.session = MCSession(peer: self.myPeerId)
+        self.advertiser = MCAdvertiserAssistant(serviceType: serviceType, discoveryInfo: nil, session: self.session!)
+        self.advertiser?.start()
 
         // Do any additional setup after loading the view, typically from a nib.
     }
