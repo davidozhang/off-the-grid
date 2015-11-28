@@ -74,23 +74,35 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
     }
     
     func draw() {
-        UIGraphicsBeginImageContextWithOptions(view.frame.size, false, 1)
+        UIGraphicsBeginImageContext(view.frame.size)
         let context = UIGraphicsGetCurrentContext()
         let rect = CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height)
         CGContextSetRGBFillColor(context, 1.0, 1.0, 1.0, 1.0)
-        CGContextFillRect(context, rect)
+        //CGContextFillRect(context, rect)
+        CGContextClearRect(context, rect)
         CGContextAddRect(context, rect)
         
         
-        for stroke in self.strokes {
-            drawStroke(context, stroke: stroke)
-        }
+        tempImageView.image?.drawInRect(CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height))
         
+        for stroke in self.strokes {
+            CGContextMoveToPoint(context, stroke.fromPoint.x, stroke.fromPoint.y)
+            CGContextAddLineToPoint(context, stroke.toPoint.x, stroke.toPoint.y)
+                //            let dx = stroke.toPoint.x - stroke.fromPoint.x
+                //            let dy = stroke.toPoint.y - stroke.fromPoint.y
+                //            let d = sqrt(dx * dx + dy * dy)
+                
+                // drawStroke(context, stroke: stroke)
+            CGContextSetLineCap(context, CGLineCap.Round)
+            CGContextSetLineWidth(context, brushWidth)
+            CGContextSetRGBStrokeColor(context, stroke.r, stroke.g, stroke.b, stroke.a)
+            CGContextStrokePath(context)
+        }
+        tempImageView.image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
     }
     
     func drawStroke(context: CGContextRef?, stroke: Stroke) {
-        tempImageView.image?.drawInRect(CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height))
         CGContextMoveToPoint(context, stroke.fromPoint.x, stroke.fromPoint.y)
         CGContextAddLineToPoint(context, stroke.toPoint.x, stroke.toPoint.y)
         let dx = stroke.toPoint.x - stroke.fromPoint.x
@@ -101,8 +113,6 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
         CGContextSetLineWidth(context, brushWidth * d / 10)
         CGContextSetRGBStrokeColor(context, stroke.r, stroke.g, stroke.b, stroke.a)
         CGContextStrokePath(context)
-        tempImageView.image = UIGraphicsGetImageFromCurrentImageContext()
-//        tempImageView.alpha = opacity
         
     }
     
@@ -122,17 +132,17 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
     
     
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        if !swipe {
-            draw()
-        }
+//        if !swipe {
+//            draw()
+//        }
         
-        UIGraphicsBeginImageContext(mainImageView.frame.size)
-        mainImageView.image?.drawInRect(CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height), blendMode: CGBlendMode.Normal, alpha: 1.0)
-        tempImageView.image?.drawInRect(CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height), blendMode: CGBlendMode.Normal, alpha: opacity)
-        mainImageView.image = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        
-        tempImageView.image = nil
+//        UIGraphicsBeginImageContext(mainImageView.frame.size)
+//        mainImageView.image?.drawInRect(CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height), blendMode: CGBlendMode.Normal, alpha: 1.0)
+//        tempImageView.image?.drawInRect(CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height), blendMode: CGBlendMode.Normal, alpha: opacity)
+//        mainImageView.image = UIGraphicsGetImageFromCurrentImageContext()
+//        UIGraphicsEndImageContext()
+//        
+//        tempImageView.image = nil
     }
     
     func newStrokesReceived(strokes: [Stroke]) {

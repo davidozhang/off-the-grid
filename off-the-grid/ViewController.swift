@@ -68,7 +68,7 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         if session?.connectedPeers.count > 0 {
             do {
                 var dict: [String: [String: CGFloat]] = Dictionary()
-                for i in 0...strokes.count {
+                for i in 0...strokes.count-1 {
                     dict[String(i)] = strokes[i].toDict()
                 }
                 let data : NSData =  NSKeyedArchiver.archivedDataWithRootObject(dict)
@@ -94,7 +94,7 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         
         var newOtherStrokes = [Stroke]()
         
-        for i in 0...otherStrokes.count {
+        for i in 0...otherStrokes.count-1 {
             newOtherStrokes[i] = otherStrokes[i]!
         }
         
