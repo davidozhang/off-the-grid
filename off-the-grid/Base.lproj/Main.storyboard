@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9060" systemVersion="15B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="JXE-gh-DAO">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9059" systemVersion="15B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="JXE-gh-DAO">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9051"/>
-        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9049"/>
     </dependencies>
     <scenes>
         <!--Connect-->
@@ -57,25 +56,25 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="l62-iz-DCQ" userLabel="MainImageView">
-                                <rect key="frame" x="0.0" y="0.0" width="600" height="551"/>
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                                 <animations/>
                             </imageView>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="7bZ-CW-lPt" userLabel="TempImageView">
-                                <rect key="frame" x="0.0" y="0.0" width="600" height="551"/>
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                                 <animations/>
                             </imageView>
                         </subviews>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstAttribute="trailingMargin" secondItem="7bZ-CW-lPt" secondAttribute="trailing" constant="-20" id="8FJ-Vh-psn"/>
-                            <constraint firstItem="wt6-62-Cwp" firstAttribute="top" secondItem="7bZ-CW-lPt" secondAttribute="bottom" id="9tq-IF-mor"/>
-                            <constraint firstItem="7bZ-CW-lPt" firstAttribute="leading" secondItem="RgC-nh-6lj" secondAttribute="leadingMargin" constant="-20" id="C98-Ux-3AN"/>
-                            <constraint firstItem="l62-iz-DCQ" firstAttribute="top" secondItem="fuz-yr-gI4" secondAttribute="bottom" constant="-20" id="Gnw-7c-c23"/>
-                            <constraint firstItem="7bZ-CW-lPt" firstAttribute="top" secondItem="fuz-yr-gI4" secondAttribute="bottom" constant="-20" id="R9r-TF-Oih"/>
-                            <constraint firstItem="l62-iz-DCQ" firstAttribute="leading" secondItem="RgC-nh-6lj" secondAttribute="leadingMargin" constant="-20" id="Ud3-hY-Dj8"/>
-                            <constraint firstItem="wt6-62-Cwp" firstAttribute="top" secondItem="l62-iz-DCQ" secondAttribute="bottom" id="gf4-Dx-Tco"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="l62-iz-DCQ" secondAttribute="trailing" constant="-20" id="oX0-zq-Fb4"/>
+                            <constraint firstItem="l62-iz-DCQ" firstAttribute="height" secondItem="RgC-nh-6lj" secondAttribute="height" id="2P6-7m-N5H"/>
+                            <constraint firstItem="l62-iz-DCQ" firstAttribute="centerX" secondItem="RgC-nh-6lj" secondAttribute="centerX" id="2dG-3x-juf"/>
+                            <constraint firstItem="l62-iz-DCQ" firstAttribute="centerY" secondItem="RgC-nh-6lj" secondAttribute="centerY" id="56o-gm-hjF"/>
+                            <constraint firstItem="l62-iz-DCQ" firstAttribute="width" secondItem="RgC-nh-6lj" secondAttribute="width" id="8mZ-5G-P8N"/>
+                            <constraint firstItem="7bZ-CW-lPt" firstAttribute="centerX" secondItem="RgC-nh-6lj" secondAttribute="centerX" id="Ghp-FN-fFn"/>
+                            <constraint firstItem="7bZ-CW-lPt" firstAttribute="width" secondItem="RgC-nh-6lj" secondAttribute="width" id="aq7-SC-BUk"/>
+                            <constraint firstItem="7bZ-CW-lPt" firstAttribute="height" secondItem="RgC-nh-6lj" secondAttribute="height" id="uHD-z9-Gqo"/>
+                            <constraint firstItem="7bZ-CW-lPt" firstAttribute="centerY" secondItem="RgC-nh-6lj" secondAttribute="centerY" id="xHH-SX-Zjb"/>
                         </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" title="Canvas" image="Canvas" id="yW9-ik-U1q"/>
