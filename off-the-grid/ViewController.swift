@@ -65,8 +65,8 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     
     
     func session(session: MCSession, didReceiveData data: NSData, fromPeer peerID: MCPeerID) {
-        let dict = NSKeyedUnarchiver.unarchiveObjectWithData(data)
-        print(dict)
+        let dict = NSKeyedUnarchiver.unarchiveObjectWithData(data) as! [String: String]
+        print(dict["message"])
     }
     func session(session: MCSession, didStartReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, withProgress progress: NSProgress) {
         print("didStartReceivingResourceWithName \(resourceName)")
@@ -83,11 +83,14 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         
         let msgDict : [String: AnyObject] = ["message": "hey"]
         let data : NSData = NSKeyedArchiver.archivedDataWithRootObject(msgDict)
-        do {
-            try session.sendData(data, toPeers: session.connectedPeers, withMode: MCSessionSendDataMode.Reliable)
-        } catch is NSError {
-            print("failed to send data")
-        }
+        //if session.connectedPeers.count > 0 {
+            do {
+                try session.sendData(data, toPeers: [peerID], withMode: MCSessionSendDataMode.Reliable)
+                print("sent data")
+            } catch {
+                print("failed to send data \(session.connectedPeers.count)")
+            }
+        //}
     }
 
 }
