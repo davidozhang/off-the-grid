@@ -10,7 +10,7 @@ import UIKit
 import MultipeerConnectivity
 
 protocol viewControllerDelegate {
-    func newStrokeReceived(fromPoint: CGPoint, toPoint: CGPoint)
+    func newStrokesReceived(strokes: [Stroke])
 }
 
 class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessionDelegate, CanvasViewControllerDelegate {
@@ -64,11 +64,13 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         print("user denied")
     }
     
-    func newStroke(fromPoint: CGPoint, toPoint: CGPoint) {
+    func newStrokes(strokes: [Stroke]) {
         if session?.connectedPeers.count > 0 {
             do {
-                print("sending point \(fromPoint) \(toPoint)")
-                let dict : [String: AnyObject] = ["fromPointX": fromPoint.x, "fromPointY": fromPoint.y, "toPointX": toPoint.x, "toPointY": toPoint.y]
+                var dict: [String: [String: CGFloat]] = Dictionary()
+                for i in 0...strokes.count {
+                    dict[String(i)] = strokes[i].toDict()
+                }
                 let data : NSData =  NSKeyedArchiver.archivedDataWithRootObject(dict)
                 try session?.sendData(data, toPeers: session!.connectedPeers, withMode: MCSessionSendDataMode.Reliable)
             } catch {
@@ -82,11 +84,22 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     
     func session(session: MCSession, didReceiveData data: NSData, fromPeer peerID: MCPeerID) {
         print("didRecieve")
-        let dict = NSKeyedUnarchiver.unarchiveObjectWithData(data) as! [String: CGFloat]
-        let fromPoint : CGPoint = CGPointMake(dict["fromPointX"]!, dict["fromPointY"]!)
-        let toPoint : CGPoint = CGPointMake(dict["toPointX"]!, dict["toPointY"]!)
+        let dict = NSKeyedUnarchiver.unarchiveObjectWithData(data) as! [String: [String: CGFloat]]
+        var otherStrokes = [Stroke?](count: dict.count, repeatedValue: nil)
+        
+        for k in dict.keys {
+            let index = Int(k)
+            otherStrokes[index!] = Stroke(dict: dict[k]!)
+        }
+        
+        var newOtherStrokes = [Stroke]()
+        
+        for i in 0...otherStrokes.count {
+            newOtherStrokes[i] = otherStrokes[i]!
+        }
+        
         if vcDelegate != nil {
-            vcDelegate!.newStrokeReceived(fromPoint, toPoint: toPoint)
+            vcDelegate!.newStrokesReceived(newOtherStrokes) // Todo: peer id send it here
         }
     }
     

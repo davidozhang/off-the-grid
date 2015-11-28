@@ -7,9 +7,10 @@
 //
 
 import UIKit
+import CoreFoundation
 
 protocol CanvasViewControllerDelegate {
-    func newStroke(fromPoint: CGPoint, toPoint: CGPoint)
+    func newStrokes(strokes: [Stroke])
 }
 
 class CanvasViewController: UIViewController, UIPopoverPresentationControllerDelegate, UICollectionViewDelegate, ColorViewControllerDelegate , viewControllerDelegate{
@@ -27,6 +28,9 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
     var blue: CGFloat = 0.0
     var brushWidth: CGFloat = 10.0
     var opacity: CGFloat = 1.0
+    
+    var strokes = [Stroke]()
+    var otherStrokes = [Stroke]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -69,24 +73,36 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
         
     }
     
-    func drawLineFrom(fromPoint: CGPoint, toPoint: CGPoint) {
-        UIGraphicsBeginImageContext(view.frame.size)
+    func draw() {
+        UIGraphicsBeginImageContextWithOptions(view.frame.size, false, 1)
         let context = UIGraphicsGetCurrentContext()
+        let rect = CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height)
+        CGContextSetRGBFillColor(context, 1.0, 1.0, 1.0, 1.0)
+        CGContextFillRect(context, rect)
+        CGContextAddRect(context, rect)
+        
+        
+        for stroke in self.strokes {
+            drawStroke(context, stroke: stroke)
+        }
+        
+        UIGraphicsEndImageContext()
+    }
+    
+    func drawStroke(context: CGContextRef?, stroke: Stroke) {
         tempImageView.image?.drawInRect(CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height))
-        CGContextMoveToPoint(context, fromPoint.x, fromPoint.y)
-        CGContextAddLineToPoint(context, toPoint.x, toPoint.y)
-        let dx = toPoint.x - fromPoint.x
-        let dy = toPoint.y - fromPoint.y
+        CGContextMoveToPoint(context, stroke.fromPoint.x, stroke.fromPoint.y)
+        CGContextAddLineToPoint(context, stroke.toPoint.x, stroke.toPoint.y)
+        let dx = stroke.toPoint.x - stroke.fromPoint.x
+        let dy = stroke.toPoint.y - stroke.fromPoint.y
         let d = sqrt(dx * dx + dy * dy)
         
         CGContextSetLineCap(context, CGLineCap.Round)
         CGContextSetLineWidth(context, brushWidth * d / 10)
-        CGContextSetRGBStrokeColor(context, red, green, blue, 1.0)
-        CGContextSetBlendMode(context, CGBlendMode.Normal)
+        CGContextSetRGBStrokeColor(context, stroke.r, stroke.g, stroke.b, stroke.a)
         CGContextStrokePath(context)
         tempImageView.image = UIGraphicsGetImageFromCurrentImageContext()
-        tempImageView.alpha = opacity
-        UIGraphicsEndImageContext()
+//        tempImageView.alpha = opacity
         
     }
     
@@ -94,11 +110,10 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
         swipe = true
         let touch = touches.first! as UITouch
         let currentPoint = touch.locationInView(view)
-        print(currentPoint)
-        drawLineFrom(lastPoint, toPoint: currentPoint)
-        
+        strokes.append(Stroke(fromPoint: lastPoint, toPoint: currentPoint, r: self.red, g: self.green, b: self.blue, a: self.opacity, timeStamp: CGFloat(CFAbsoluteTimeGetCurrent())))
+        draw()
         if delegate != nil {
-            delegate!.newStroke(lastPoint, toPoint: currentPoint)
+            delegate!.newStrokes(self.strokes)
         }
         
         lastPoint = currentPoint
@@ -108,7 +123,7 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
     
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
         if !swipe {
-            drawLineFrom(lastPoint, toPoint: lastPoint)
+            draw()
         }
         
         UIGraphicsBeginImageContext(mainImageView.frame.size)
@@ -118,29 +133,18 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
         UIGraphicsEndImageContext()
         
         tempImageView.image = nil
-        
-        
     }
     
-    func newStrokeReceived(fromPoint: CGPoint, toPoint: CGPoint) {
+    func newStrokesReceived(strokes: [Stroke]) {
         if (!NSThread.isMainThread()) {
             dispatch_async(dispatch_get_main_queue(), {
-                
+                self.otherStrokes = strokes
                 // DO SOMETHING ON THE MAINTHREAD
-                self.drawLineFrom(fromPoint, toPoint: toPoint)
+                self.draw()
             })
         } else {
-            drawLineFrom(fromPoint, toPoint: toPoint)
+            draw()
         }
-//        drawLineFrom(fromPoint, toPoint: toPoint)
-        
-//        UIGraphicsBeginImageContext(mainImageView.frame.size)
-//        mainImageView.image?.drawInRect(CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height), blendMode: CGBlendMode.Normal, alpha: 1.0)
-//        tempImageView.image?.drawInRect(CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height), blendMode: CGBlendMode.Normal, alpha: opacity)
-//        mainImageView.image = UIGraphicsGetImageFromCurrentImageContext()
-//        UIGraphicsEndImageContext()
-//        
-//        tempImageView.image = nil
     }
 
     override func didReceiveMemoryWarning() {
