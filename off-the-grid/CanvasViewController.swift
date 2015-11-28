@@ -72,11 +72,6 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
         swipe = false
         let touch = touches.first! as UITouch
         lastPoint = touch.locationInView(self.view)
-        if (self.strokes.count > 0) {
-            for i in 0...(self.strokes.count - 1) {
-                self.allStrokes.append(self.strokes[i])
-            }
-        }
         self.strokes = []
         
     }
@@ -118,6 +113,9 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
             self.strokes.append(latestStroke)
             draw(latestStroke)
         }
+        for i in 0...(self.strokes.count - 1) {
+            self.allStrokes.append(self.strokes[i])
+        }
         
         UIGraphicsBeginImageContext(mainImageView.frame.size)
         mainImageView.image?.drawInRect(CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height), blendMode: CGBlendMode.Normal, alpha: 1.0)
@@ -133,7 +131,28 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
         
         sleep(5)
         
+        undo()
+    }
+    
+    func undo() {
+        self.allStrokes = ([Stroke]) (self.allStrokes.prefix(self.allStrokes.count - self.strokes.count))
+        redraw()
+    }
+    
+    func redraw() {
+        mainImageView.image = nil
         
+        if (self.allStrokes.count > 0) {
+            for i in 0...(self.allStrokes.count - 1) {
+                draw(self.allStrokes[i])
+            }
+        }
+        
+        if (self.allOtherStrokes.count > 0 ) {
+            for j in 0...(self.allOtherStrokes.count - 1) {
+                draw(self.allOtherStrokes[j])
+            }
+        }
     }
     
     func newStrokesReceived(strokes: [Stroke]) {
@@ -158,10 +177,7 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
             }
         }
     }
-
-    func undo() {
-        
-    }
+    
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
