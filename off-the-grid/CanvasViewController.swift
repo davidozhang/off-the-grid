@@ -123,7 +123,24 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
     }
     
     func newStrokeReceived(fromPoint: CGPoint, toPoint: CGPoint) {
-        drawLineFrom(fromPoint, toPoint: toPoint)
+        if (!NSThread.isMainThread()) {
+            dispatch_async(dispatch_get_main_queue(), {
+                
+                // DO SOMETHING ON THE MAINTHREAD
+                self.drawLineFrom(fromPoint, toPoint: toPoint)
+            })
+        } else {
+            drawLineFrom(fromPoint, toPoint: toPoint)
+        }
+//        drawLineFrom(fromPoint, toPoint: toPoint)
+        
+//        UIGraphicsBeginImageContext(mainImageView.frame.size)
+//        mainImageView.image?.drawInRect(CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height), blendMode: CGBlendMode.Normal, alpha: 1.0)
+//        tempImageView.image?.drawInRect(CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height), blendMode: CGBlendMode.Normal, alpha: opacity)
+//        mainImageView.image = UIGraphicsGetImageFromCurrentImageContext()
+//        UIGraphicsEndImageContext()
+//        
+//        tempImageView.image = nil
     }
 
     override func didReceiveMemoryWarning() {
