@@ -8,7 +8,7 @@
 
 import UIKit
 
-class CanvasViewController: UIViewController {
+class CanvasViewController: UIViewController, UIPopoverPresentationControllerDelegate {
 
     @IBOutlet weak var mainImageView: UIImageView!
     @IBOutlet weak var tempImageView: UIImageView!
@@ -24,10 +24,18 @@ class CanvasViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        //self.tabBarController?.tabBar.hidden = true
         // Do any additional setup after loading the view.
     }
     
+    
+    @IBAction func test(sender: UIButton) {
+        self.performSegueWithIdentifier("ColorSegue", sender: nil)
+    }
+    
+    func adaptivePresentationStyleForPresentationController(controller: UIPresentationController) -> UIModalPresentationStyle {
+        return UIModalPresentationStyle.None
+    }
     
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -38,15 +46,33 @@ class CanvasViewController: UIViewController {
         
     }
     
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if(segue.identifier == "ColorSegue") {
+            print("hello")
+            let pickerViewController = segue.destinationViewController
+            
+                if let povc = pickerViewController.popoverPresentationController {
+                    povc.delegate = self
+                    
+                
+            }
+        }
+    }
+    
+    
     func drawLineFrom(fromPoint: CGPoint, toPoint: CGPoint) {
         UIGraphicsBeginImageContext(view.frame.size)
         let context = UIGraphicsGetCurrentContext()
         tempImageView.image?.drawInRect(CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height))
         CGContextMoveToPoint(context, fromPoint.x, fromPoint.y)
         CGContextAddLineToPoint(context, toPoint.x, toPoint.y)
+        let dx = toPoint.x - fromPoint.x
+        let dy = toPoint.y - fromPoint.y
+        let d = sqrt(dx * dx + dy * dy)
         
         CGContextSetLineCap(context, CGLineCap.Round)
-        CGContextSetLineWidth(context, brushWidth)
+        CGContextSetLineWidth(context, brushWidth * d / 10)
         CGContextSetRGBStrokeColor(context, red, green, blue, 1.0)
         CGContextSetBlendMode(context, CGBlendMode.Normal)
         CGContextStrokePath(context)
@@ -60,6 +86,7 @@ class CanvasViewController: UIViewController {
         swipe = true
         let touch = touches.first! as UITouch
         let currentPoint = touch.locationInView(view)
+        print(currentPoint)
         drawLineFrom(lastPoint, toPoint: currentPoint)
         lastPoint = currentPoint
         
