@@ -28,16 +28,6 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
         // Do any additional setup after loading the view.
     }
     
-    
-    @IBAction func test(sender: UIButton) {
-        self.performSegueWithIdentifier("ColorSegue", sender: nil)
-    }
-    
-    func adaptivePresentationStyleForPresentationController(controller: UIPresentationController) -> UIModalPresentationStyle {
-        return UIModalPresentationStyle.None
-    }
-    
-    
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         swipe = false
         let touch = touches.first! as UITouch
@@ -45,21 +35,6 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
 
         
     }
-    
-    
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if(segue.identifier == "ColorSegue") {
-            print("hello")
-            let pickerViewController = segue.destinationViewController
-            
-                if let povc = pickerViewController.popoverPresentationController {
-                    povc.delegate = self
-                    
-                
-            }
-        }
-    }
-    
     
     func drawLineFrom(fromPoint: CGPoint, toPoint: CGPoint) {
         UIGraphicsBeginImageContext(view.frame.size)
