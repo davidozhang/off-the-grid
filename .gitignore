@@ -23,7 +23,7 @@ DerivedData
 # you should judge for yourself, the pros and cons are mentioned at:
 # http://guides.cocoapods.org/using/using-cocoapods.html#should-i-ignore-the-pods-directory-in-source-control
 #
-# Pods/
+Pods/
 
 # Carthage
 #
@@ -32,26 +32,3 @@ DerivedData
 
 Carthage/Build
 
-Off The Grid.xcodeproj/project.pbxproj
-
-Off The Grid.xcodeproj/project.pbxproj
-
-Off The Grid.xcodeproj/project.pbxproj
-
-Podfile.lock
-
-Off The Grid.xcodeproj/project.pbxproj
-
-Podfile.lock
-
-Pods/Manifest.lock
-
-Pods/Pods.xcodeproj/project.pbxproj
-
-Pods/Target Support Files/ObjectiveSugar/ObjectiveSugar.xcconfig
-
-Pods/Target Support Files/ObjectiveSugar/ObjectiveSugar.xcconfig
-
-Pods/Target Support Files/Pods/Pods-frameworks.sh
-
-Pods/Target Support Files/Pods/Pods-resources.sh
