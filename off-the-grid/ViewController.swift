@@ -9,11 +9,12 @@
 import UIKit
 import MultipeerConnectivity
 
-class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessionDelegate {
+class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessionDelegate, CanvasViewControllerDelegate {
     private let serviceType = "Off-The-Grid"
     private let myPeerId = MCPeerID.init(displayName: UIDevice.currentDevice().name)
     private var session : MCSession?
     private var advertiser : MCAdvertiserAssistant?
+    @IBOutlet var canvasViewController: CanvasViewController!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -59,12 +60,24 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         print("user denied")
     }
     
-    
+    func newStroke(fromPoint: CGPoint, toPoint: CGPoint) {
+        if session?.connectedPeers.count > 0 {
+            do {
+                print("sending point \(fromPoint) \(toPoint)")
+                let dict : [String: AnyObject] = ["fromPointX": fromPoint.x, "fromPointY": fromPoint.y, "toPointX": toPoint.x, "toPointY": toPoint.y]
+                let data : NSData =  NSKeyedArchiver.archivedDataWithRootObject(dict)
+                try session?.sendData(data, toPeers: session!.connectedPeers, withMode: MCSessionSendDataMode.Reliable)
+            } catch {
+                print("failed to send point")
+            }
+        }
+    }
     
   
     
     
     func session(session: MCSession, didReceiveData data: NSData, fromPeer peerID: MCPeerID) {
+        print("didRecieve")
         let dict = NSKeyedUnarchiver.unarchiveObjectWithData(data) as! [String: String]
         print(dict["message"])
     }

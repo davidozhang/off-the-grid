@@ -15,6 +15,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+        let tabBarController = window?.rootViewController as! UITabBarController
+        let viewControllers = tabBarController.viewControllers! as [UIViewController]
+        let viewController = viewControllers[0] as! ViewController
+        let canvasController = viewControllers[1] as! CanvasViewController
+        canvasController.delegate = viewController
+        
         // Override point for customization after application launch.
         return true
     }

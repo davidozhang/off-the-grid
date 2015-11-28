@@ -8,10 +8,16 @@
 
 import UIKit
 
+protocol CanvasViewControllerDelegate {
+    func newStroke(fromPoint: CGPoint, toPoint: CGPoint)
+}
+
 class CanvasViewController: UIViewController, UIPopoverPresentationControllerDelegate, UICollectionViewDelegate, ColorViewControllerDelegate {
 
     @IBOutlet weak var mainImageView: UIImageView!
     @IBOutlet weak var tempImageView: UIImageView!
+    
+    var delegate : CanvasViewControllerDelegate?
     
     var swipe = false
     var lastPoint = CGPoint.zero
@@ -90,8 +96,13 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
         let currentPoint = touch.locationInView(view)
         print(currentPoint)
         drawLineFrom(lastPoint, toPoint: currentPoint)
-        lastPoint = currentPoint
         
+        if delegate != nil {
+            delegate!.newStroke(lastPoint, toPoint: currentPoint)
+        }
+        
+        lastPoint = currentPoint
+
     }
     
     
