@@ -13,6 +13,8 @@
 		0EBB47341C09796600382DA5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0EBB47331C09796600382DA5 /* Assets.xcassets */; };
 		0EBB47371C09796600382DA5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0EBB47351C09796600382DA5 /* LaunchScreen.storyboard */; };
 		0ED363361C0986C0004D27DD /* CanvasViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ED363351C0986C0004D27DD /* CanvasViewController.swift */; };
+		630B7C701C09A92C00ABAAB3 /* ColorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630B7C6F1C09A92C00ABAAB3 /* ColorViewController.swift */; };
+		630B7C721C09EFFD00ABAAB3 /* ColorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630B7C711C09EFFD00ABAAB3 /* ColorCell.swift */; };
 		8A837C8C51B4D6106232C8B0 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7123474DE7ABB7BC06BECA8 /* libPods.a */; };
 /* End PBXBuildFile section */
 
@@ -26,6 +28,8 @@
 		0EBB47361C09796600382DA5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		0EBB47381C09796600382DA5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0ED363351C0986C0004D27DD /* CanvasViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CanvasViewController.swift; sourceTree = "<group>"; };
+		630B7C6F1C09A92C00ABAAB3 /* ColorViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorViewController.swift; sourceTree = "<group>"; };
+		630B7C711C09EFFD00ABAAB3 /* ColorCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorCell.swift; sourceTree = "<group>"; };
 		A7E537201401246CB6B65BB1 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		B7123474DE7ABB7BC06BECA8 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -78,6 +82,8 @@
 				0EBB47331C09796600382DA5 /* Assets.xcassets */,
 				0EBB47351C09796600382DA5 /* LaunchScreen.storyboard */,
 				0EBB47381C09796600382DA5 /* Info.plist */,
+				630B7C6F1C09A92C00ABAAB3 /* ColorViewController.swift */,
+				630B7C711C09EFFD00ABAAB3 /* ColorCell.swift */,
 			);
 			path = "off-the-grid";
 			sourceTree = "<group>";
@@ -216,6 +222,8 @@
 			files = (
 				0EBB472F1C09796600382DA5 /* ViewController.swift in Sources */,
 				0ED363361C0986C0004D27DD /* CanvasViewController.swift in Sources */,
+				630B7C701C09A92C00ABAAB3 /* ColorViewController.swift in Sources */,
+				630B7C721C09EFFD00ABAAB3 /* ColorCell.swift in Sources */,
 				0EBB472D1C09796600382DA5 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

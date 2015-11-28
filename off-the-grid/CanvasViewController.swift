@@ -8,7 +8,7 @@
 
 import UIKit
 
-class CanvasViewController: UIViewController, UIPopoverPresentationControllerDelegate {
+class CanvasViewController: UIViewController, UIPopoverPresentationControllerDelegate, UICollectionViewDelegate, ColorViewControllerDelegate {
 
     @IBOutlet weak var mainImageView: UIImageView!
     @IBOutlet weak var tempImageView: UIImageView!
@@ -24,8 +24,35 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //self.tabBarController?.tabBar.hidden = true
+
+        let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: "longPressed:")
+        self.view.addGestureRecognizer(longPressRecognizer)
         // Do any additional setup after loading the view.
+    }
+    
+    func changeColor(red: CGFloat, blue: CGFloat, green: CGFloat, alpha: CGFloat) {
+        self.red = red
+        self.blue = blue
+        self.green = green
+        self.opacity = alpha
+    }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if segue.identifier == "ColourSegue" {
+            if let colorViewController = segue.destinationViewController as? ColorViewController {
+                if let popvc = colorViewController.popoverPresentationController {
+                    popvc.delegate = self
+                }
+            }
+        }
+    }
+    
+    func longPressed(sender: UILongPressGestureRecognizer) {
+        performSegueWithIdentifier("ColourSegue", sender: nil)
+    }
+    
+    func adaptivePresentationStyleForPresentationController(controller: UIPresentationController) -> UIModalPresentationStyle {
+        return UIModalPresentationStyle.None
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
