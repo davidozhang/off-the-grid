@@ -9,7 +9,7 @@
 import UIKit
 import MultipeerConnectivity
 
-class ViewController: UIViewController, UIPopoverPresentationControllerDelegate {
+class ViewController: UIViewController, UIPopoverPresentationControllerDelegate, MCBrowserViewControllerDelegate {
     private let serviceType = "Off-The-Grid"
     private let myPeerId = MCPeerID.init(displayName: UIDevice.currentDevice().name)
     private var session : MCSession?
@@ -20,6 +20,7 @@ class ViewController: UIViewController, UIPopoverPresentationControllerDelegate 
         self.session = MCSession(peer: self.myPeerId)
         self.advertiser = MCAdvertiserAssistant(serviceType: serviceType, discoveryInfo: nil, session: self.session!)
         self.advertiser?.start()
+        
 
         // Do any additional setup after loading the view, typically from a nib.
     }
@@ -31,6 +32,7 @@ class ViewController: UIViewController, UIPopoverPresentationControllerDelegate 
         let tempFrame = CGRectMake(0, 0, self.view.frame.width, self.view.frame.height - (self.tabBarController?.tabBar.frame.height)!)
         browser.view.frame = tempFrame
         self.view.addSubview(browser.view)
+        browser.delegate = self
 //        browser.modalPresentationStyle = .Popover
 //        let popoverBrowserController = browser.popoverPresentationController
 //        popoverBrowserController?.permittedArrowDirections = UIPopoverArrowDirection(rawValue: 0)
@@ -50,6 +52,13 @@ class ViewController: UIViewController, UIPopoverPresentationControllerDelegate 
         // Dispose of any resources that can be recreated.
     }
 
+    func browserViewControllerDidFinish(browserViewController: MCBrowserViewController) {
+        NSLog("%@", "finished")
+    }
+    
+    func browserViewControllerWasCancelled(browserViewController: MCBrowserViewController) {
+        print("user denied")
+    }
 
 }
 
