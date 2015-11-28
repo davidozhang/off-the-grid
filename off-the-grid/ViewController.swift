@@ -65,20 +65,29 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     
     
     func session(session: MCSession, didReceiveData data: NSData, fromPeer peerID: MCPeerID) {
-        
+        let dict = NSKeyedUnarchiver.unarchiveObjectWithData(data)
+        print(dict)
     }
     func session(session: MCSession, didStartReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, withProgress progress: NSProgress) {
-        
+        print("didStartReceivingResourceWithName \(resourceName)")
     }
     
     func session(session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, atURL localURL: NSURL, withError error: NSError?) {
-        
+        print("didFinishRecievingResourceWithName \(resourceName) \(peerID)")
     }
     func session(session: MCSession, didReceiveStream stream: NSInputStream, withName streamName: String, fromPeer peerID: MCPeerID) {
-        
+        print("didRecieveStream \(streamName) \(peerID)")
     }
     func session(session: MCSession, peer peerID: MCPeerID, didChangeState state: MCSessionState) {
+        print("changed State \(peerID)")
         
+        let msgDict : [String: AnyObject] = ["message": "hey"]
+        let data : NSData = NSKeyedArchiver.archivedDataWithRootObject(msgDict)
+        do {
+            try session.sendData(data, toPeers: session.connectedPeers, withMode: MCSessionSendDataMode.Reliable)
+        } catch is NSError {
+            print("failed to send data")
+        }
     }
 
 }
