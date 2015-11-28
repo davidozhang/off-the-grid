@@ -12,6 +12,7 @@
 		0EBB47321C09796600382DA5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0EBB47301C09796600382DA5 /* Main.storyboard */; };
 		0EBB47341C09796600382DA5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0EBB47331C09796600382DA5 /* Assets.xcassets */; };
 		0EBB47371C09796600382DA5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0EBB47351C09796600382DA5 /* LaunchScreen.storyboard */; };
+		0ED363361C0986C0004D27DD /* CanvasViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ED363351C0986C0004D27DD /* CanvasViewController.swift */; };
 		8A837C8C51B4D6106232C8B0 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7123474DE7ABB7BC06BECA8 /* libPods.a */; };
 /* End PBXBuildFile section */
 
@@ -24,6 +25,7 @@
 		0EBB47331C09796600382DA5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0EBB47361C09796600382DA5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		0EBB47381C09796600382DA5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0ED363351C0986C0004D27DD /* CanvasViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CanvasViewController.swift; sourceTree = "<group>"; };
 		A7E537201401246CB6B65BB1 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		B7123474DE7ABB7BC06BECA8 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -71,6 +73,7 @@
 			children = (
 				0EBB472C1C09796600382DA5 /* AppDelegate.swift */,
 				0EBB472E1C09796600382DA5 /* ViewController.swift */,
+				0ED363351C0986C0004D27DD /* CanvasViewController.swift */,
 				0EBB47301C09796600382DA5 /* Main.storyboard */,
 				0EBB47331C09796600382DA5 /* Assets.xcassets */,
 				0EBB47351C09796600382DA5 /* LaunchScreen.storyboard */,
@@ -123,7 +126,7 @@
 				TargetAttributes = {
 					0EBB47281C09796600382DA5 = {
 						CreatedOnToolsVersion = 7.1.1;
-						DevelopmentTeam = R6552SUGAZ;
+						DevelopmentTeam = 236NXDKWHE;
 					};
 				};
 			};
@@ -212,6 +215,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0EBB472F1C09796600382DA5 /* ViewController.swift in Sources */,
+				0ED363361C0986C0004D27DD /* CanvasViewController.swift in Sources */,
 				0EBB472D1C09796600382DA5 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
