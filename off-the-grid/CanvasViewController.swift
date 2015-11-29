@@ -137,7 +137,7 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
             CGContextStrokePath(context)
         }
 
-        tempImageView.image = UIGraphicsGetImageFromCurrentImageContext()
+        //tempImageView.image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
     }
     
@@ -159,6 +159,7 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
         CGContextSetBlendMode(context, CGBlendMode.Normal)
         CGContextStrokePath(context)
         tempImageView.image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
     }
     
     
