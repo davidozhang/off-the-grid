@@ -12,7 +12,7 @@ protocol CanvasViewControllerDelegate {
     func newStroke(fromPoint: CGPoint, toPoint: CGPoint)
 }
 
-class CanvasViewController: UIViewController, UIPopoverPresentationControllerDelegate, UICollectionViewDelegate, ColorViewControllerDelegate , viewControllerDelegate{
+class CanvasViewController: UIViewController, UIPopoverPresentationControllerDelegate, UICollectionViewDelegate, viewControllerDelegate, ColorPickerViewDelegate{
 
     @IBOutlet weak var mainImageView: UIImageView!
     @IBOutlet weak var tempImageView: UIImageView!
@@ -35,19 +35,31 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
         self.view.addGestureRecognizer(longPressRecognizer)
         // Do any additional setup after loading the view.
     }
+
     
-    func changeColor(red: CGFloat, blue: CGFloat, green: CGFloat, alpha: CGFloat) {
-        self.red = red
-        self.blue = blue
-        self.green = green
-        self.opacity = alpha
+    func changeColour(color: UIColor) {
+        var r: CGFloat = 0
+        var g: CGFloat = 0
+        var b: CGFloat = 0
+        var a: CGFloat = 0
+        if color.getRed(&r, green: &g, blue: &b, alpha: &a){
+            self.red = CGFloat(r)
+            self.green = CGFloat(g)
+            self.blue = CGFloat(b)
+            self.opacity = CGFloat(a)
+        }
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "ColourSegue" {
-            if let colorViewController = segue.destinationViewController as? ColorViewController {
-                colorViewController.delegate = self
-                if let popvc = colorViewController.popoverPresentationController {
+            if let colorPickerViewController = segue.destinationViewController as? ColorPickerViewController {
+                colorPickerViewController.delegate = self
+                let tempwidth = self.view.frame.width
+                let tempHeight = self.view.frame.height
+                colorPickerViewController.preferredContentSize = CGSize(width: tempwidth, height: tempHeight * 0.089)
+                //colorViewController.view.frame = CGRectMake(0, 0, tempwidth, tempHeight * 0.1)
+                if let popvc = colorPickerViewController.popoverPresentationController {
+
                     popvc.delegate = self
                     popvc.sourceView = self.view
                     popvc.sourceRect = CGRectMake(lastPoint.x, lastPoint.y, 0, 0)
@@ -136,31 +148,11 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
         } else {
             drawLineFrom(fromPoint, toPoint: toPoint)
         }
-//        drawLineFrom(fromPoint, toPoint: toPoint)
-        
-//        UIGraphicsBeginImageContext(mainImageView.frame.size)
-//        mainImageView.image?.drawInRect(CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height), blendMode: CGBlendMode.Normal, alpha: 1.0)
-//        tempImageView.image?.drawInRect(CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height), blendMode: CGBlendMode.Normal, alpha: opacity)
-//        mainImageView.image = UIGraphicsGetImageFromCurrentImageContext()
-//        UIGraphicsEndImageContext()
-//        
-//        tempImageView.image = nil
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }
