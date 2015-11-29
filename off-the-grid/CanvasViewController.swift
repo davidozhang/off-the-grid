@@ -32,7 +32,6 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
     var opacity: CGFloat = 1.0
     
     var strokes = [Stroke]()
-    var otherStrokes = [Stroke]()
     
     var allMyStrokes = [[Stroke]]()
     
@@ -46,6 +45,15 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
         // Do any additional setup after loading the view.
     }
 
+    override func canBecomeFirstResponder() -> Bool {
+        return true
+    }
+    
+    override func motionEnded(motion: UIEventSubtype, withEvent event: UIEvent?) {
+        if motion == .MotionShake {
+            self.undo()
+        }
+    }
     
     func changeColour(color: UIColor) {
         var r: CGFloat = 0
@@ -96,49 +104,50 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
     }
     
     func drawEverything() {
-        UIGraphicsBeginImageContext(view.frame.size)
-        let context = UIGraphicsGetCurrentContext()
-        tempImageView.image?.drawInRect(CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height))
-        let rect = CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height)
-        CGContextSetRGBFillColor(context, 1.0, 1.0, 1.0, 1.0)
-        CGContextClearRect(context, rect)
-        CGContextAddRect(context, rect)
         
+        mainImageView.image = nil
         
-        tempImageView.image?.drawInRect(CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height))
+        var allStrokes = [Stroke]()
         
-        for stroke in self.strokes {
-            CGContextMoveToPoint(context, stroke.fromPoint.x, stroke.fromPoint.y)
-            CGContextAddLineToPoint(context, stroke.toPoint.x, stroke.toPoint.y)
-            let dx = stroke.toPoint.x - stroke.fromPoint.x
-            let dy = stroke.toPoint.y - stroke.fromPoint.y
-            let d = sqrt(dx * dx + dy * dy)
-            
-            // drawStroke(context, stroke: stroke)
-            CGContextSetLineCap(context, CGLineCap.Round)
-            CGContextSetLineWidth(context, brushWidth * d / 10)
-            CGContextSetRGBStrokeColor(context, stroke.r, stroke.g, stroke.b, stroke.a)
-            CGContextSetBlendMode(context, CGBlendMode.Normal)
-            CGContextStrokePath(context)
+        if (self.allMyStrokes.count > 0) {
+            for i in 0...(self.allMyStrokes.count-1) {
+                if (self.allMyStrokes[i].count > 0) {
+                    for j in 0...(self.allMyStrokes[i].count-1) {
+                        allStrokes.append(self.allMyStrokes[i][j])
+                    }
+                }
+            }
         }
         
-        for stroke in self.otherStrokes {
-            CGContextMoveToPoint(context, stroke.fromPoint.x, stroke.fromPoint.y)
-            CGContextAddLineToPoint(context, stroke.toPoint.x, stroke.toPoint.y)
-            let dx = stroke.toPoint.x - stroke.fromPoint.x
-            let dy = stroke.toPoint.y - stroke.fromPoint.y
-            let d = sqrt(dx * dx + dy * dy)
-            
-            // drawStroke(context, stroke: stroke)
-            CGContextSetLineCap(context, CGLineCap.Round)
-            CGContextSetLineWidth(context, brushWidth * d / 10)
-            CGContextSetRGBStrokeColor(context, stroke.r, stroke.g, stroke.b, stroke.a)
-            CGContextSetBlendMode(context, CGBlendMode.Normal)
-            CGContextStrokePath(context)
+        for k in self.allOtherStrokes.keys {
+            if (self.allOtherStrokes[k]!.count > 0) {
+                for i in 0...(self.allOtherStrokes[k]!.count-1) {
+                    if (self.allOtherStrokes[k]![i].count > 0) {
+                        for j in 0...(self.allOtherStrokes[k]![i].count-1) {
+                            allStrokes.append(self.allOtherStrokes[k]![i][j])
+                        }
+                    }
+                }
+            }
         }
 
-        //tempImageView.image = UIGraphicsGetImageFromCurrentImageContext()
+        // Sort allStrokes based on timestamp
+        allStrokes.sortInPlace({ $0.timeStamp < $1.timeStamp })
+        
+        if allStrokes.count > 0 {
+            for i in 0...(allStrokes.count-1) {
+                drawStroke(allStrokes[i])
+            }
+        }
+        
+        UIGraphicsBeginImageContext(mainImageView.frame.size)
+        mainImageView.image?.drawInRect(CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height), blendMode: CGBlendMode.Normal, alpha: 1.0)
+        tempImageView.image?.drawInRect(CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height), blendMode: CGBlendMode.Normal, alpha: opacity)
+        mainImageView.image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
+        
+        tempImageView.image = nil
+
     }
     
     func drawStroke(stroke: Stroke) {
@@ -152,9 +161,8 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
         let dy = stroke.toPoint.y - stroke.fromPoint.y
         let d = sqrt(dx * dx + dy * dy)
         
-        // drawStroke(context, stroke: stroke)
         CGContextSetLineCap(context, CGLineCap.Round)
-        CGContextSetLineWidth(context, brushWidth * d / 10)
+        CGContextSetLineWidth(context, brushWidth * d / 30)
         CGContextSetRGBStrokeColor(context, stroke.r, stroke.g, stroke.b, stroke.a)
         CGContextSetBlendMode(context, CGBlendMode.Normal)
         CGContextStrokePath(context)
@@ -201,11 +209,13 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
         if delegate != nil {
             delegate!.updateAllStrokes(self.allMyStrokes)
         }
-        
     }
     
     func undo() {
         self.allMyStrokes = (([[Stroke]]) (self.allMyStrokes.dropLast()))
+        if delegate != nil {
+            delegate!.updateAllStrokes(self.allMyStrokes)
+        }
         drawEverything()
     }
     
@@ -222,8 +232,14 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
     
     
     func updateGlobalReceived(strokes: [[Stroke]], peerID: MCPeerID) {
-        self.allOtherStrokes[peerID] = strokes
-        drawEverything()
+        if (self.allOtherStrokes[peerID]!.count > strokes.count) {
+            // peer undid an action, need to redraw
+            self.allOtherStrokes[peerID] = strokes
+            drawEverything()
+        } else {
+            // peer drew an action, add it to other strokes
+            self.allOtherStrokes[peerID] = strokes
+        }
     }
     
     

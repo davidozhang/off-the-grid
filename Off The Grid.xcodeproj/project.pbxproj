@@ -17,7 +17,7 @@
 		630B7C721C09EFFD00ABAAB3 /* ColorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630B7C711C09EFFD00ABAAB3 /* ColorCell.swift */; };
 		63A972A91C0A5C0000C54F54 /* ColorPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A972A81C0A5C0000C54F54 /* ColorPickerViewController.swift */; };
 		8A837C8C51B4D6106232C8B0 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7123474DE7ABB7BC06BECA8 /* libPods.a */; };
-		C0B9B76F1C0A2E550009FB69 /* Stroke.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0B9B76E1C0A2E550009FB69 /* Stroke.swift */; settings = {ASSET_TAGS = (); }; };
+		C0B9B76F1C0A2E550009FB69 /* Stroke.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0B9B76E1C0A2E550009FB69 /* Stroke.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */

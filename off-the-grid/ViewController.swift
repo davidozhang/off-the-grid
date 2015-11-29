@@ -84,15 +84,17 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         if session?.connectedPeers.count > 0 {
             do {
                 var dict: [String: [String: [String: CGFloat]]] = Dictionary()
-                for i in 0...(strokess.count - 1) {
-                    var innerDict: [String: [String: CGFloat]] = Dictionary()
-                    for j in 0...(strokess[i].count - 1) {
-                        innerDict[String(j)] = strokess[i][j].toDict()
+                if (strokess.count > 0) {
+                    for i in 0...(strokess.count - 1) {
+                        var innerDict: [String: [String: CGFloat]] = Dictionary()
+                        for j in 0...(strokess[i].count - 1) {
+                            innerDict[String(j)] = strokess[i][j].toDict()
+                        }
+                        dict[String(i)] = innerDict
                     }
-                    dict[String(i)] = innerDict
+                    let data : NSData =  NSKeyedArchiver.archivedDataWithRootObject(dict)
+                    try session?.sendData(data, toPeers: session!.connectedPeers, withMode: MCSessionSendDataMode.Reliable)
                 }
-                let data : NSData =  NSKeyedArchiver.archivedDataWithRootObject(dict)
-                try session?.sendData(data, toPeers: session!.connectedPeers, withMode: MCSessionSendDataMode.Reliable)
             } catch {
                 print("failed to send [[stroke]]")
             }
