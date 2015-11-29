@@ -130,7 +130,7 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
                 }
             }
         }
-        
+
         // Sort allStrokes based on timestamp
         allStrokes.sortInPlace({ $0.timeStamp < $1.timeStamp })
         
@@ -167,6 +167,7 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
         CGContextSetBlendMode(context, CGBlendMode.Normal)
         CGContextStrokePath(context)
         tempImageView.image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
     }
     
     
