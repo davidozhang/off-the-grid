@@ -23,6 +23,7 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
     var delegate : CanvasViewControllerDelegate?
     
     var swipe = false
+    var panningZooming = false
     var lastPoint = CGPoint.zero
     
     var red: CGFloat = 0.0
@@ -36,6 +37,10 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
     var allMyStrokes = [[Stroke]]()
     
     var allOtherStrokes = [MCPeerID: [[Stroke]]]()
+    
+    var offset : CGPoint = CGPoint.zero
+    var panningStartingPoint : CGPoint? = nil
+    var totalOffset : CGPoint = CGPoint.zero
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -96,19 +101,28 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        swipe = false
-        let touch = touches.first! as UITouch
-        lastPoint = touch.locationInView(self.view)
-        self.strokes = []
+        if event!.allTouches()!.count == 2 {
+            print("began panning")
+            panningZooming = true
+            let t1 = event!.allTouches()!.first!.locationInView(self.view)
+            let t2 = event!.allTouches()!.dropFirst().first!.locationInView(self.view)
+            let avgX = (t1.x + t2.x) / 2
+            let avgY = (t1.y + t2.y) / 2
+            panningStartingPoint = CGPointMake(avgX, avgY)
+        } else {
+            swipe = false
+            let touch = touches.first! as UITouch
+            lastPoint = touch.locationInView(self.view)
+            self.strokes = []
+        }
         
     }
     
     func drawEverything() {
-        
+        print("drawEverything")
         mainImageView.image = nil
         
         var allStrokes = [Stroke]()
-        
         if (self.allMyStrokes.count > 0) {
             for i in 0...(self.allMyStrokes.count-1) {
                 if (self.allMyStrokes[i].count > 0) {
@@ -134,29 +148,36 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
         // Sort allStrokes based on timestamp
         allStrokes.sortInPlace({ $0.timeStamp < $1.timeStamp })
         
+        UIGraphicsBeginImageContext(view.frame.size)
+        let context = UIGraphicsGetCurrentContext()
+        tempImageView.image?.drawInRect(CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height))
         if allStrokes.count > 0 {
             for i in 0...(allStrokes.count-1) {
-                drawStroke(allStrokes[i])
+                drawStroke(context, stroke: allStrokes[i])
             }
         }
+        
+        tempImageView.image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
         
         UIGraphicsBeginImageContext(mainImageView.frame.size)
         mainImageView.image?.drawInRect(CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height), blendMode: CGBlendMode.Normal, alpha: 1.0)
         tempImageView.image?.drawInRect(CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height), blendMode: CGBlendMode.Normal, alpha: opacity)
         mainImageView.image = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
         
+        UIGraphicsEndImageContext()
         tempImageView.image = nil
 
     }
     
-    func drawStroke(stroke: Stroke) {
+    func slowDrawStroke(stroke: Stroke) {
+        
         UIGraphicsBeginImageContext(view.frame.size)
         let context = UIGraphicsGetCurrentContext()
         tempImageView.image?.drawInRect(CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height))
         
-        CGContextMoveToPoint(context, stroke.fromPoint.x, stroke.fromPoint.y)
-        CGContextAddLineToPoint(context, stroke.toPoint.x, stroke.toPoint.y)
+        CGContextMoveToPoint(context, stroke.fromPoint.x + totalOffset.x, stroke.fromPoint.y + totalOffset.y)
+        CGContextAddLineToPoint(context, stroke.toPoint.x + totalOffset.x, stroke.toPoint.y + totalOffset.y)
         let dx = stroke.toPoint.x - stroke.fromPoint.x
         let dy = stroke.toPoint.y - stroke.fromPoint.y
         let d = sqrt(dx * dx + dy * dy)
@@ -168,29 +189,71 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
         CGContextStrokePath(context)
         tempImageView.image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
+        
+    }
+    
+    func drawStroke(context: CGContextRef?, stroke: Stroke) {
+        
+        CGContextMoveToPoint(context, stroke.fromPoint.x + totalOffset.x, stroke.fromPoint.y + totalOffset.y)
+        CGContextAddLineToPoint(context, stroke.toPoint.x + totalOffset.x, stroke.toPoint.y + totalOffset.y)
+        let dx = stroke.toPoint.x - stroke.fromPoint.x
+        let dy = stroke.toPoint.y - stroke.fromPoint.y
+        let d = sqrt(dx * dx + dy * dy)
+        
+        CGContextSetLineCap(context, CGLineCap.Round)
+        CGContextSetLineWidth(context, brushWidth * d / 30)
+        CGContextSetRGBStrokeColor(context, stroke.r, stroke.g, stroke.b, stroke.a)
+        CGContextSetBlendMode(context, CGBlendMode.Normal)
+        CGContextStrokePath(context)
     }
     
     
     override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        swipe = true
-        let touch = touches.first! as UITouch
-        let currentPoint = touch.locationInView(view)
-        let latestStroke = Stroke(fromPoint: lastPoint, toPoint: currentPoint, r: self.red, g: self.green, b: self.blue, a: self.opacity, timeStamp: CGFloat(CFAbsoluteTimeGetCurrent()))
-        self.strokes.append(latestStroke)
-        drawStroke(latestStroke)
-        lastPoint = currentPoint
+        if (event!.allTouches()!.count == 2) {
+            let t1 = event!.allTouches()!.first!.locationInView(self.view)
+            let t2 = event!.allTouches()!.dropFirst().first!.locationInView(self.view)
+            let avgX = (t1.x + t2.x) / 2
+            let avgY = (t1.y + t2.y) / 2
+            if let startPoint = panningStartingPoint {
+                let dx = avgX - startPoint.x
+                let dy = avgY - startPoint.y
+                self.totalOffset = CGPointMake(dx + offset.x, dy + offset.y)
+                //dispatch_async(dispatch_get_main_queue(), {
+                    self.drawEverything()
+                //})
+                print("panning")
+            }
+        } else {
+            swipe = true
+            let touch = touches.first! as UITouch
+            let currentPoint = touch.locationInView(view)
+            let p1 = CGPointMake(lastPoint.x - totalOffset.x, lastPoint.y - totalOffset.y)
+            let p2 = CGPointMake(currentPoint.x - totalOffset.x, currentPoint.y - totalOffset.y)
+            let latestStroke = Stroke(fromPoint: p1, toPoint: p2, r: self.red, g: self.green, b: self.blue, a: self.opacity, timeStamp: CGFloat(CFAbsoluteTimeGetCurrent()))
+            self.strokes.append(latestStroke)
+            slowDrawStroke(latestStroke)
+            lastPoint = currentPoint
         
-        if delegate != nil {
-            delegate!.newStroke(latestStroke)
+            if delegate != nil {
+                delegate!.newStroke(latestStroke)
+            }
         }
     }
     
     
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        if panningZooming {
+            panningStartingPoint = nil
+            offset = totalOffset
+            panningZooming = false
+            //dispatch_async(dispatch_get_main_queue(), {
+                self.drawEverything()
+            //})
+        }
         if !swipe {
             let latestStroke = Stroke(fromPoint: lastPoint, toPoint: lastPoint, r: self.red, g: self.green, b: self.blue, a: self.opacity, timeStamp: CGFloat(CFAbsoluteTimeGetCurrent()))
             self.strokes.append(latestStroke)
-            drawStroke(latestStroke)
+            slowDrawStroke(latestStroke)
             if delegate != nil {
                 delegate!.newStroke(latestStroke)
             }
@@ -223,10 +286,10 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
     func newStrokeReceived(stroke: Stroke) {
         if (!NSThread.isMainThread()) {
             dispatch_async(dispatch_get_main_queue(), {
-                self.drawStroke(stroke)
+                self.slowDrawStroke(stroke)
             })
         } else {
-            self.drawStroke(stroke)
+            self.slowDrawStroke(stroke)
         }
     }
     
