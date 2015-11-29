@@ -134,8 +134,6 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
         // Sort allStrokes based on timestamp
         allStrokes.sortInPlace({ $0.timeStamp < $1.timeStamp })
         
-        print(allStrokes)
-        
         if allStrokes.count > 0 {
             for i in 0...(allStrokes.count-1) {
                 drawStroke(allStrokes[i])
