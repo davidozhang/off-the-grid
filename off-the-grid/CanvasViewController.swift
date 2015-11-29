@@ -15,7 +15,7 @@ protocol CanvasViewControllerDelegate {
     func updateAllStrokes(strokes: [[Stroke]])
 }
 
-class CanvasViewController: UIViewController, UIPopoverPresentationControllerDelegate, UICollectionViewDelegate, ColorViewControllerDelegate , viewControllerDelegate{
+class CanvasViewController: UIViewController, UIPopoverPresentationControllerDelegate, UICollectionViewDelegate, viewControllerDelegate, ColorPickerViewDelegate{
 
     @IBOutlet weak var mainImageView: UIImageView!
     @IBOutlet weak var tempImageView: UIImageView!
@@ -45,25 +45,41 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
         self.view.addGestureRecognizer(longPressRecognizer)
         // Do any additional setup after loading the view.
     }
+
     
-    func changeColor(red: CGFloat, blue: CGFloat, green: CGFloat, alpha: CGFloat) {
-        self.red = red
-        self.blue = blue
-        self.green = green
-        self.opacity = alpha
+    func changeColour(color: UIColor) {
+        var r: CGFloat = 0
+        var g: CGFloat = 0
+        var b: CGFloat = 0
+        var a: CGFloat = 0
+        if color.getRed(&r, green: &g, blue: &b, alpha: &a){
+            self.red = CGFloat(r)
+            self.green = CGFloat(g)
+            self.blue = CGFloat(b)
+            self.opacity = CGFloat(a)
+        }
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "ColourSegue" {
-            if let colorViewController = segue.destinationViewController as? ColorViewController {
-                if let popvc = colorViewController.popoverPresentationController {
+            if let colorPickerViewController = segue.destinationViewController as? ColorPickerViewController {
+                colorPickerViewController.delegate = self
+                let tempwidth = self.view.frame.width
+                let tempHeight = self.view.frame.height
+                colorPickerViewController.preferredContentSize = CGSize(width: tempwidth, height: tempHeight * 0.089)
+                //colorViewController.view.frame = CGRectMake(0, 0, tempwidth, tempHeight * 0.1)
+                if let popvc = colorPickerViewController.popoverPresentationController {
+
                     popvc.delegate = self
+                    popvc.sourceView = self.view
+                    popvc.sourceRect = CGRectMake(lastPoint.x, lastPoint.y, 0, 0)
                 }
             }
         }
     }
     
     func longPressed(sender: UILongPressGestureRecognizer) {
+        
         performSegueWithIdentifier("ColourSegue", sender: nil)
     }
     
@@ -94,28 +110,30 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
         for stroke in self.strokes {
             CGContextMoveToPoint(context, stroke.fromPoint.x, stroke.fromPoint.y)
             CGContextAddLineToPoint(context, stroke.toPoint.x, stroke.toPoint.y)
-                //            let dx = stroke.toPoint.x - stroke.fromPoint.x
-                //            let dy = stroke.toPoint.y - stroke.fromPoint.y
-                //            let d = sqrt(dx * dx + dy * dy)
-                
-                // drawStroke(context, stroke: stroke)
+            let dx = stroke.toPoint.x - stroke.fromPoint.x
+            let dy = stroke.toPoint.y - stroke.fromPoint.y
+            let d = sqrt(dx * dx + dy * dy)
+            
+            // drawStroke(context, stroke: stroke)
             CGContextSetLineCap(context, CGLineCap.Round)
-            CGContextSetLineWidth(context, brushWidth)
+            CGContextSetLineWidth(context, brushWidth * d / 10)
             CGContextSetRGBStrokeColor(context, stroke.r, stroke.g, stroke.b, stroke.a)
+            CGContextSetBlendMode(context, CGBlendMode.Normal)
             CGContextStrokePath(context)
         }
         
         for stroke in self.otherStrokes {
             CGContextMoveToPoint(context, stroke.fromPoint.x, stroke.fromPoint.y)
             CGContextAddLineToPoint(context, stroke.toPoint.x, stroke.toPoint.y)
-            //            let dx = stroke.toPoint.x - stroke.fromPoint.x
-            //            let dy = stroke.toPoint.y - stroke.fromPoint.y
-            //            let d = sqrt(dx * dx + dy * dy)
+            let dx = stroke.toPoint.x - stroke.fromPoint.x
+            let dy = stroke.toPoint.y - stroke.fromPoint.y
+            let d = sqrt(dx * dx + dy * dy)
             
             // drawStroke(context, stroke: stroke)
             CGContextSetLineCap(context, CGLineCap.Round)
-            CGContextSetLineWidth(context, brushWidth)
+            CGContextSetLineWidth(context, brushWidth * d / 10)
             CGContextSetRGBStrokeColor(context, stroke.r, stroke.g, stroke.b, stroke.a)
+            CGContextSetBlendMode(context, CGBlendMode.Normal)
             CGContextStrokePath(context)
         }
 
@@ -130,14 +148,15 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
         
         CGContextMoveToPoint(context, stroke.fromPoint.x, stroke.fromPoint.y)
         CGContextAddLineToPoint(context, stroke.toPoint.x, stroke.toPoint.y)
-        //            let dx = stroke.toPoint.x - stroke.fromPoint.x
-        //            let dy = stroke.toPoint.y - stroke.fromPoint.y
-        //            let d = sqrt(dx * dx + dy * dy)
+        let dx = stroke.toPoint.x - stroke.fromPoint.x
+        let dy = stroke.toPoint.y - stroke.fromPoint.y
+        let d = sqrt(dx * dx + dy * dy)
         
         // drawStroke(context, stroke: stroke)
         CGContextSetLineCap(context, CGLineCap.Round)
-        CGContextSetLineWidth(context, brushWidth)
+        CGContextSetLineWidth(context, brushWidth * d / 10)
         CGContextSetRGBStrokeColor(context, stroke.r, stroke.g, stroke.b, stroke.a)
+        CGContextSetBlendMode(context, CGBlendMode.Normal)
         CGContextStrokePath(context)
         tempImageView.image = UIGraphicsGetImageFromCurrentImageContext()
     }
@@ -211,16 +230,5 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }
