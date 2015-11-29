@@ -45,6 +45,15 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
         // Do any additional setup after loading the view.
     }
 
+    override func canBecomeFirstResponder() -> Bool {
+        return true
+    }
+    
+    override func motionEnded(motion: UIEventSubtype, withEvent event: UIEvent?) {
+        if motion == .MotionShake {
+            self.undo()
+        }
+    }
     
     func changeColour(color: UIColor) {
         var r: CGFloat = 0
@@ -95,16 +104,8 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
     }
     
     func drawEverything() {
-        UIGraphicsBeginImageContext(view.frame.size)
-        let context = UIGraphicsGetCurrentContext()
-        tempImageView.image?.drawInRect(CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height))
-        let rect = CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height)
-        CGContextSetRGBFillColor(context, 1.0, 1.0, 1.0, 1.0)
-        CGContextClearRect(context, rect)
-        CGContextAddRect(context, rect)
         
-        
-        tempImageView.image?.drawInRect(CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height))
+        mainImageView.image = nil
         
         var allStrokes = [Stroke]()
         
@@ -131,17 +132,24 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
         }
         
         // Sort allStrokes based on timestamp
+        allStrokes.sortInPlace({ $0.timeStamp < $1.timeStamp })
         
-        let sortedArray = allStrokes.sort({ $0.timeStamp < $1.timeStamp })
+        print(allStrokes)
         
-        if sortedArray.count > 0 {
-            for i in 0...(sortedArray.count-1) {
-                drawStroke(sortedArray[i])
+        if allStrokes.count > 0 {
+            for i in 0...(allStrokes.count-1) {
+                drawStroke(allStrokes[i])
             }
         }
         
-        tempImageView.image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsBeginImageContext(mainImageView.frame.size)
+        mainImageView.image?.drawInRect(CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height), blendMode: CGBlendMode.Normal, alpha: 1.0)
+        tempImageView.image?.drawInRect(CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height), blendMode: CGBlendMode.Normal, alpha: opacity)
+        mainImageView.image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
+        
+        tempImageView.image = nil
+
     }
     
     func drawStroke(stroke: Stroke) {
