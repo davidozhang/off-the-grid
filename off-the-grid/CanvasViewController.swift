@@ -45,6 +45,12 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        self.view.multipleTouchEnabled = true
+        self.mainImageView.multipleTouchEnabled = true
+        self.tempImageView.multipleTouchEnabled = true
+        
+        
+        
         let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: "longPressed:")
         self.view.addGestureRecognizer(longPressRecognizer)
     }

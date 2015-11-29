@@ -60,6 +60,9 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     }
     
     
+    
+    
+    
     func newStroke(stroke: Stroke) {
         if session?.connectedPeers.count > 0 {
             do {
@@ -158,6 +161,8 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         print("didRecieveStream \(streamName) \(peerID)")
     }
     func session(session: MCSession, peer peerID: MCPeerID, didChangeState state: MCSessionState) {
+        
+
         print("changed State \(peerID)")
         if vcDelegate != nil {
             vcDelegate!.newPeer()
