@@ -40,13 +40,6 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         browser.view.frame = tempFrame
         self.view.addSubview(browser.view)
         browser.delegate = self
-//        browser.modalPresentationStyle = .Popover
-//        let popoverBrowserController = browser.popoverPresentationController
-//        popoverBrowserController?.permittedArrowDirections = UIPopoverArrowDirection(rawValue: 0)
-//        popoverBrowserController?.delegate = self
-//        popoverBrowserController?.sourceView = self.view
-//        popoverBrowserController?.sourceRect = CGRectMake(self.view.frame.width/2 - 10, self.view.frame.height/2 - 10, 0, 0)
-   //     presentViewController(browser, animated: true, completion: {})
     }
     
   
