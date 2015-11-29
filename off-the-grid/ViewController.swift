@@ -15,22 +15,20 @@ protocol viewControllerDelegate {
     func newPeer()
 }
 
-class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessionDelegate, CanvasViewControllerDelegate {
+class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessionDelegate, MCNearbyServiceAdvertiserDelegate, CanvasViewControllerDelegate {
     private let serviceType = "Off-The-Grid"
     internal let myPeerId = MCPeerID.init(displayName: UIDevice.currentDevice().name)
     private var session : MCSession?
     private var advertiser : MCAdvertiserAssistant?
+    private var nearbyAdvertiser : MCNearbyServiceAdvertiser?
     var vcDelegate : viewControllerDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.session = MCSession(peer: self.myPeerId)
         self.session!.delegate = self
-        self.advertiser = MCAdvertiserAssistant(serviceType: serviceType, discoveryInfo: nil, session: self.session!)
-        self.advertiser?.start()
-        
-
-        // Do any additional setup after loading the view, typically from a nib.
+        self.nearbyAdvertiser = MCNearbyServiceAdvertiser.init(peer: myPeerId, discoveryInfo: ["hi": "hello"], serviceType: serviceType)
+        self.nearbyAdvertiser?.delegate = self
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -41,10 +39,8 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         browser.view.frame = tempFrame
         self.view.addSubview(browser.view)
         browser.delegate = self
+        self.nearbyAdvertiser?.startAdvertisingPeer()
     }
-    
-  
-    
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -95,9 +91,6 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
             }
         }
     }
-
-  
-    
     
     func session(session: MCSession, didReceiveData data: NSData, fromPeer peerID: MCPeerID) {
         print("receiveData")
@@ -163,6 +156,26 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
             vcDelegate!.newPeer()
         }
     }
-
+    
+    
+    func advertiser(advertiser: MCNearbyServiceAdvertiser, didReceiveInvitationFromPeer peerID: MCPeerID, withContext context: NSData?, invitationHandler: (Bool, MCSession) -> Void) {
+        print("didreceiveinvitation")
+        var inputTextField = UITextField()
+        let confirmAlert = UIAlertController(title: "Off The Grid", message: "\(peerID.displayName) wants to connect", preferredStyle: UIAlertControllerStyle.Alert)
+        confirmAlert.addTextFieldWithConfigurationHandler({(textField: UITextField!) in
+            textField.placeholder = "0000"
+            textField.secureTextEntry = true
+            inputTextField = textField
+        })
+        
+        confirmAlert.addAction(UIAlertAction(title:"Accept", style: UIAlertActionStyle.Default, handler: { action in
+            if inputTextField.text == "0000" {
+                invitationHandler(true, self.session!)
+            }
+        }))
+        confirmAlert.addAction(UIAlertAction(title:"Cancel", style: UIAlertActionStyle.Cancel, handler: nil))
+        self.presentViewController(confirmAlert, animated: true, completion: nil)
+    }
+    
 }
 
