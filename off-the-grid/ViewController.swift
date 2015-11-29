@@ -12,6 +12,7 @@ import MultipeerConnectivity
 protocol viewControllerDelegate {
     func newStrokeReceived(stroke: Stroke)
     func updateGlobalReceived(strokes: [[Stroke]], peerID: MCPeerID)
+    func newPeer()
 }
 
 class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessionDelegate, CanvasViewControllerDelegate {
@@ -76,6 +77,7 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     func updateAllStrokes(strokess:[[Stroke]]) {
         if session?.connectedPeers.count > 0 {
             do {
+                print("updating all strokes")
                 var dict: [String: [String: [String: CGFloat]]] = Dictionary()
                 if (strokess.count > 0) {
                     for i in 0...(strokess.count - 1) {
@@ -85,9 +87,9 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
                         }
                         dict[String(i)] = innerDict
                     }
-                    let data : NSData =  NSKeyedArchiver.archivedDataWithRootObject(dict)
-                    try session?.sendData(data, toPeers: session!.connectedPeers, withMode: MCSessionSendDataMode.Reliable)
                 }
+                let data : NSData =  NSKeyedArchiver.archivedDataWithRootObject(dict)
+                try session?.sendData(data, toPeers: session!.connectedPeers, withMode: MCSessionSendDataMode.Reliable)
             } catch {
                 print("failed to send [[stroke]]")
             }
@@ -98,15 +100,19 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     
     
     func session(session: MCSession, didReceiveData data: NSData, fromPeer peerID: MCPeerID) {
-        print("didRecieve")
-        
+        print("receiveData")
         if let dict = NSKeyedUnarchiver.unarchiveObjectWithData(data) as? [String: CGFloat] {
-            let otherStroke: Stroke = Stroke(dict: dict)
-            
-            if vcDelegate != nil {
-                vcDelegate!.newStrokeReceived(otherStroke)
+            if (dict.count > 0) {
+                let otherStroke: Stroke = Stroke(dict: dict)
+                if vcDelegate != nil {
+                    vcDelegate!.newStrokeReceived(otherStroke)
+                }
+            } else {
+                if vcDelegate != nil
+                {
+                    vcDelegate!.updateGlobalReceived([[Stroke]](), peerID: peerID)
+                }
             }
-            
         } else {
             let dict = NSKeyedUnarchiver.unarchiveObjectWithData(data) as! [String: [String: [String: CGFloat]]]
             
@@ -153,6 +159,9 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     }
     func session(session: MCSession, peer peerID: MCPeerID, didChangeState state: MCSessionState) {
         print("changed State \(peerID)")
+        if vcDelegate != nil {
+            vcDelegate!.newPeer()
+        }
     }
 
 }

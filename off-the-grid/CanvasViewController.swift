@@ -47,7 +47,17 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
 
         let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: "longPressed:")
         self.view.addGestureRecognizer(longPressRecognizer)
-        // Do any additional setup after loading the view.
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        if (!NSThread.isMainThread()) {
+            dispatch_async(dispatch_get_main_queue(), {
+                self.drawEverything()
+            })
+        } else {
+            drawEverything()
+        }
     }
 
     override func canBecomeFirstResponder() -> Bool {
@@ -120,7 +130,13 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
     
     func drawEverything() {
         print("drawEverything")
-        mainImageView.image = nil
+        if let _ = mainImageView {
+            mainImageView.image = nil
+        }
+        
+        if let _ = tempImageView {
+            tempImageView.image = nil
+        }
         
         var allStrokes = [Stroke]()
         if (self.allMyStrokes.count > 0) {
@@ -146,13 +162,16 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
         }
 
         // Sort allStrokes based on timestamp
-        allStrokes.sortInPlace({ $0.timeStamp < $1.timeStamp })
+        if (allStrokes.count > 0) {
+            allStrokes.sortInPlace({ $0.timeStamp < $1.timeStamp })
+        }
         
         UIGraphicsBeginImageContext(view.frame.size)
         let context = UIGraphicsGetCurrentContext()
         tempImageView.image?.drawInRect(CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height))
+        
         if allStrokes.count > 0 {
-            for i in 0...(allStrokes.count-1) {
+            for i in 0...max(0, allStrokes.count-1) {
                 drawStroke(context, stroke: allStrokes[i])
             }
         }
@@ -221,7 +240,6 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
                 //dispatch_async(dispatch_get_main_queue(), {
                     self.drawEverything()
                 //})
-                print("panning")
             }
         } else {
             swipe = true
@@ -298,10 +316,23 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
         if (self.allOtherStrokes[peerID] != nil && self.allOtherStrokes[peerID]!.count > strokes.count) {
             // peer undid an action, need to redraw
             self.allOtherStrokes[peerID] = strokes
-            drawEverything()
+            if (!NSThread.isMainThread()) {
+                dispatch_async(dispatch_get_main_queue(), {
+                    self.drawEverything()
+                })
+            } else {
+                drawEverything()
+            }
         } else {
             // peer drew an action, add it to other strokes
             self.allOtherStrokes[peerID] = strokes
+        }
+    }
+    
+    
+    func newPeer() {
+        if delegate != nil {
+            delegate!.updateAllStrokes(self.allMyStrokes)
         }
     }
     
