@@ -10,12 +10,13 @@ import UIKit
 import MultipeerConnectivity
 
 protocol viewControllerDelegate {
-    func newStrokesReceived(strokes: [Stroke])
+    func newStrokeReceived(stroke: Stroke)
+    func updateGlobalReceived(strokes: [[Stroke]], peerID: MCPeerID)
 }
 
 class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessionDelegate, CanvasViewControllerDelegate {
     private let serviceType = "Off-The-Grid"
-    private let myPeerId = MCPeerID.init(displayName: UIDevice.currentDevice().name)
+    internal let myPeerId = MCPeerID.init(displayName: UIDevice.currentDevice().name)
     private var session : MCSession?
     private var advertiser : MCAdvertiserAssistant?
     var vcDelegate : viewControllerDelegate?
@@ -64,42 +65,84 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         print("user denied")
     }
     
-    func newStrokes(strokes: [Stroke]) {
+    
+    func newStroke(stroke: Stroke) {
         if session?.connectedPeers.count > 0 {
             do {
-                var dict: [String: [String: CGFloat]] = Dictionary()
-                for i in 0...(strokes.count - 1) {
-                    dict[String(i)] = strokes[i].toDict()
-                }
+                let dict = stroke.toDict()
                 let data : NSData =  NSKeyedArchiver.archivedDataWithRootObject(dict)
                 try session?.sendData(data, toPeers: session!.connectedPeers, withMode: MCSessionSendDataMode.Reliable)
             } catch {
                 print("failed to send point")
             }
+
         }
     }
     
+    
+    func updateAllStrokes(strokess:[[Stroke]]) {
+        if session?.connectedPeers.count > 0 {
+            do {
+                var dict: [String: [String: [String: CGFloat]]] = Dictionary()
+                for i in 0...(strokess.count - 1) {
+                    var innerDict: [String: [String: CGFloat]] = Dictionary()
+                    for j in 0...(strokess[i].count - 1) {
+                        innerDict[String(j)] = strokess[i][j].toDict()
+                    }
+                    dict[String(i)] = innerDict
+                }
+                let data : NSData =  NSKeyedArchiver.archivedDataWithRootObject(dict)
+                try session?.sendData(data, toPeers: session!.connectedPeers, withMode: MCSessionSendDataMode.Reliable)
+            } catch {
+                print("failed to send [[stroke]]")
+            }
+        }
+    }
+
   
     
     
     func session(session: MCSession, didReceiveData data: NSData, fromPeer peerID: MCPeerID) {
         print("didRecieve")
-        let dict = NSKeyedUnarchiver.unarchiveObjectWithData(data) as! [String: [String: CGFloat]]
-        var otherStrokes = [Stroke?](count: dict.count, repeatedValue: nil)
         
-        for k in dict.keys {
-            let index = Int(k)
-            otherStrokes[index!] = Stroke(dict: dict[k]!)
-        }
-        
-        var newOtherStrokes = [Stroke]()
-        
-        for i in 0...(otherStrokes.count-1) {
-            newOtherStrokes.append(otherStrokes[i]!)
-        }
-        
-        if vcDelegate != nil {
-            vcDelegate!.newStrokesReceived(newOtherStrokes) // Todo: peer id send it here
+        if let dict = NSKeyedUnarchiver.unarchiveObjectWithData(data) as? [String: CGFloat] {
+            let otherStroke: Stroke = Stroke(dict: dict)
+            
+            if vcDelegate != nil {
+                vcDelegate!.newStrokeReceived(otherStroke)
+            }
+            
+        } else {
+            let dict = NSKeyedUnarchiver.unarchiveObjectWithData(data) as! [String: [String: [String: CGFloat]]]
+            
+            var otherActions = [[Stroke?]](count: dict.count, repeatedValue:[Stroke?]())
+            
+            for k in dict.keys {
+                let innerDict = dict[k]!
+                var singleAction = [Stroke?](count: innerDict.count, repeatedValue:nil)
+                for j in innerDict.keys {
+                    let strokeDict = innerDict[j]!
+                    let otherStroke : Stroke = Stroke(dict: strokeDict)
+                    singleAction[Int(j)!] = otherStroke
+                }
+                
+                otherActions[Int(k)!] = singleAction
+            }
+            
+            var confirmedActions = [[Stroke]]()
+            
+            for i in 0...(otherActions.count-1) {
+                var singleConfirmedAction = [Stroke]()
+                for j in 0...(otherActions[i].count-1) {
+                    singleConfirmedAction.append(otherActions[i][j]!)
+                }
+                confirmedActions.append(singleConfirmedAction)
+            }
+            
+            if vcDelegate != nil {
+                vcDelegate!.updateGlobalReceived(confirmedActions, peerID: peerID)
+            }
+            
         }
     }
     
@@ -115,17 +158,6 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     }
     func session(session: MCSession, peer peerID: MCPeerID, didChangeState state: MCSessionState) {
         print("changed State \(peerID)")
-        
-//        let msgDict : [String: AnyObject] = ["message": 0.5]
-//        let data : NSData = NSKeyedArchiver.archivedDataWithRootObject(msgDict)
-//        //if session.connectedPeers.count > 0 {
-//            do {
-//                try session.sendData(data, toPeers: [peerID], withMode: MCSessionSendDataMode.Reliable)
-//                print("sent data")
-//            } catch {
-//                print("failed to send data \(session.connectedPeers.count)")
-//            }
-//        //}
     }
 
 }
