@@ -232,7 +232,7 @@ class CanvasViewController: UIViewController, UIPopoverPresentationControllerDel
     
     
     func updateGlobalReceived(strokes: [[Stroke]], peerID: MCPeerID) {
-        if (self.allOtherStrokes[peerID]!.count > strokes.count) {
+        if (self.allOtherStrokes[peerID] != nil && self.allOtherStrokes[peerID]!.count > strokes.count) {
             // peer undid an action, need to redraw
             self.allOtherStrokes[peerID] = strokes
             drawEverything()
