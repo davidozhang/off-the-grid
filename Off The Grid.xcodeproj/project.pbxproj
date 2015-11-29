@@ -17,6 +17,7 @@
 		630B7C721C09EFFD00ABAAB3 /* ColorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630B7C711C09EFFD00ABAAB3 /* ColorCell.swift */; };
 		63A972A91C0A5C0000C54F54 /* ColorPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A972A81C0A5C0000C54F54 /* ColorPickerViewController.swift */; };
 		8A837C8C51B4D6106232C8B0 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7123474DE7ABB7BC06BECA8 /* libPods.a */; };
+		C0B9B76F1C0A2E550009FB69 /* Stroke.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0B9B76E1C0A2E550009FB69 /* Stroke.swift */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +35,7 @@
 		63A972A81C0A5C0000C54F54 /* ColorPickerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorPickerViewController.swift; sourceTree = "<group>"; };
 		A7E537201401246CB6B65BB1 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		B7123474DE7ABB7BC06BECA8 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		C0B9B76E1C0A2E550009FB69 /* Stroke.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stroke.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,6 +89,7 @@
 				0EBB47381C09796600382DA5 /* Info.plist */,
 				630B7C6F1C09A92C00ABAAB3 /* ColorViewController.swift */,
 				630B7C711C09EFFD00ABAAB3 /* ColorCell.swift */,
+				C0B9B76E1C0A2E550009FB69 /* Stroke.swift */,
 			);
 			path = "off-the-grid";
 			sourceTree = "<group>";
@@ -224,6 +227,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0EBB472F1C09796600382DA5 /* ViewController.swift in Sources */,
+				C0B9B76F1C0A2E550009FB69 /* Stroke.swift in Sources */,
 				0ED363361C0986C0004D27DD /* CanvasViewController.swift in Sources */,
 				63A972A91C0A5C0000C54F54 /* ColorPickerViewController.swift in Sources */,
 				630B7C701C09A92C00ABAAB3 /* ColorViewController.swift in Sources */,
