@@ -42,7 +42,9 @@ class ColorPickerViewController: UIViewController {
         
         self.colour2.layer.cornerRadius = self.colour2.frame.width/2
         self.colour2.setTitle("", forState: UIControlState.Normal)
-        self.colour2.backgroundColor = UIColor(red: 98/255, green: 65/255, blue: 247/255, alpha: 0.5)
+        self.colour2.backgroundColor = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 1)
+        self.colour2.layer.borderWidth = 1
+        self.colour2.layer.borderColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5).CGColor
         
         self.colour3.layer.cornerRadius = self.colour3.frame.width/2
         self.colour3.setTitle("", forState: UIControlState.Normal)
