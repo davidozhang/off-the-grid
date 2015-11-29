@@ -22,6 +22,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         canvasController.delegate = viewController
         viewController.vcDelegate = canvasController
         
+        
+        UITabBar.appearance().itemPositioning = UITabBarItemPositioning.Fill
+        
         // Override point for customization after application launch.
         return true
     }
