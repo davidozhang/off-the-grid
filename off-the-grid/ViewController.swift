@@ -117,34 +117,41 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
                 }
             }
         } else {
-            let dict = NSKeyedUnarchiver.unarchiveObjectWithData(data) as! [String: [String: [String: CGFloat]]]
-            
-            var otherActions = [[Stroke?]](count: dict.count, repeatedValue:[Stroke?]())
-            
-            for k in dict.keys {
-                let innerDict = dict[k]!
-                var singleAction = [Stroke?](count: innerDict.count, repeatedValue:nil)
-                for j in innerDict.keys {
-                    let strokeDict = innerDict[j]!
-                    let otherStroke : Stroke = Stroke(dict: strokeDict)
-                    singleAction[Int(j)!] = otherStroke
+            if let dict = NSKeyedUnarchiver.unarchiveObjectWithData(data) as? [String: [String: [String: CGFloat]]] {
+                if (dict.count > 0) {
+                    var otherActions = [[Stroke?]](count: dict.count, repeatedValue:[Stroke?]())
+                    
+                    for k in dict.keys {
+                        let innerDict = dict[k]!
+                        var singleAction = [Stroke?](count: innerDict.count, repeatedValue:nil)
+                        for j in innerDict.keys {
+                            let strokeDict = innerDict[j]!
+                            let otherStroke : Stroke = Stroke(dict: strokeDict)
+                            singleAction[Int(j)!] = otherStroke
+                        }
+                        
+                        otherActions[Int(k)!] = singleAction
+                    }
+                    
+                    var confirmedActions = [[Stroke]]()
+                    
+                    for i in 0...(otherActions.count-1) {
+                        var singleConfirmedAction = [Stroke]()
+                        for j in 0...(otherActions[i].count-1) {
+                            singleConfirmedAction.append(otherActions[i][j]!)
+                        }
+                        confirmedActions.append(singleConfirmedAction)
+                    }
+                    
+                    if vcDelegate != nil {
+                        vcDelegate!.updateGlobalReceived(confirmedActions, peerID: peerID)
+                    }
+                } else {
+                    if vcDelegate != nil {
+                        vcDelegate?.updateGlobalReceived([[Stroke]](), peerID: peerID)
+                    }
                 }
-                
-                otherActions[Int(k)!] = singleAction
-            }
-            
-            var confirmedActions = [[Stroke]]()
-            
-            for i in 0...(otherActions.count-1) {
-                var singleConfirmedAction = [Stroke]()
-                for j in 0...(otherActions[i].count-1) {
-                    singleConfirmedAction.append(otherActions[i][j]!)
-                }
-                confirmedActions.append(singleConfirmedAction)
-            }
-            
-            if vcDelegate != nil {
-                vcDelegate!.updateGlobalReceived(confirmedActions, peerID: peerID)
+
             }
             
         }
